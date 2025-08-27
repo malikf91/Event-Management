@@ -1,0 +1,157 @@
+<div class="row">
+  <div class="card company-settings-new">
+    <div class="card-body w-100">
+      <div class="content-page-header">
+        <h5>Company Settings</h5>
+      </div>
+      <div class="row">
+        <div class="col-lg-6 col-12">
+          <div class="input-block mb-3">
+            <label for="Company">Company Name</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Enter Company Name"
+              name="companyName"
+              [(ngModel)]="companySettings.name"
+              [disabled]="!isBeingEdited"
+              />
+            </div>
+          </div>
+          <div class="col-lg-6 col-12">
+            <div class="input-block mb-3">
+              <label for="Addres">Company Address</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Enter Company Address"
+                name="companyAddress"
+                [(ngModel)]="companySettings.address1"
+                [disabled]="!isBeingEdited"
+                />
+              </div>
+            </div>
+            <div class="col-lg-6 col-12">
+              <div class="input-block mb-3">
+                <label for="Phone">Phone Number</label>
+                <input type="text" class="form-control" placeholder="Enter Phone Number" [(ngModel)]="companySettings.phoneNumber" name="companyPhone" [disabled]="!isBeingEdited">
+              </div>
+            </div>
+            <div class="col-lg-6 col-12">
+              <div class="input-block mb-3">
+                <label for="Phone">Phone Number Alt</label>
+                <input type="text" class="form-control" placeholder="Enter Phone Number" [(ngModel)]="companySettings.phoneNumber1" name="companyPhone" [disabled]="!isBeingEdited">
+              </div>
+            </div>
+            <div class="col-lg-6 col-12">
+              <div class="input-block mb-3">
+                <label for="Company">Company Email</label>
+                <input type="text" class="form-control" placeholder="Enter Company Email" [(ngModel)]="companySettings.email" name="companyEmail" [disabled]="!isBeingEdited">
+              </div>
+            </div>
+            <div class="col-lg-6 col-12">
+              <div class="input-block mb-3">
+                <label for="Line1">Secondary Address</label>
+                <input type="text" class="form-control" placeholder="Enter Secondary Address" [(ngModel)]="companySettings.address2" name="companyAddress2" [disabled]="!isBeingEdited">
+              </div>
+            </div>
+            <div class="col-lg-6 col-12">
+              <div class="input-block mb-3">
+                <label for="Country">Country</label>
+                <input type="text" class="form-control" placeholder="Enter Country" [(ngModel)]="companySettings.country" name="companyCountry" [disabled]="!isBeingEdited">
+              </div>
+            </div>
+            <div class="col-lg-6 col-12">
+              <div class="input-block mb-3">
+                <label for="State">State</label>
+                <input type="text" class="form-control" placeholder="Enter State" [(ngModel)]="companySettings.state" name="companyState" [disabled]="!isBeingEdited">
+              </div>
+            </div>
+            <div class="col-lg-6 col-12">
+              <div class="input-block mb-3">
+                <label for="City">City</label>
+                <input type="text" class="form-control" placeholder="Enter City" [(ngModel)]="companySettings.city" name="companyCity" [disabled]="!isBeingEdited">
+              </div>
+            </div>
+            <div class="col-lg-6 col-12">
+              <div class="input-block mb-3">
+                <label for="Pincode">Pincode</label>
+                <input type="text" class="form-control" placeholder="Enter Pincode" [(ngModel)]="companySettings.zip" name="companyPincode" [disabled]="!isBeingEdited">
+              </div>
+            </div>
+            <div class="col-xl-6 col-lg-12 col-md-6 col-12">
+              <div class="input-block mb-3 mb-0 pb-0">
+                <label for="Favicon">Company Logo</label>
+                <ngx-dropzone (change)="onSelect($event)" class="service-upload" [disabled]="!isBeingEdited" >
+                  <ngx-dropzone-label class="drop-browse align-center">
+                    <span
+                      ><img src="assets/img/icons/img-drop.svg" alt="upload"
+                    /></span>
+                    <div class="drag-drop">
+                      <h6 class="drop-browse align-center">
+                        <span class="text-info me-1">Click to Replace </span> or Drag
+                        and Drop
+                      </h6>
+                    </div>
+
+                    <span class="text-muted">SVG, PNG, JPG</span>
+                  </ngx-dropzone-label>
+                  @for (f of files; track f) {
+                    <ngx-dropzone-image-preview
+                      ngProjectAs="ngx-dropzone-preview"
+                      [file]="f"
+                      [removable]="true"
+                      (removed)="onRemove(f)"
+                      >
+                    </ngx-dropzone-image-preview>
+                  }
+                </ngx-dropzone>
+              </div>
+            </div>
+            <div class="col-xl-6 col-lg-12 col-md-6 col-12">
+              <div class="input-block mb-3 mb-0 pb-0">
+                <label for="Company">SideBar Icon</label>
+                <ngx-dropzone (change)="onSelect1($event)" class="service-upload" [disabled]="!isBeingEdited">
+                  <ngx-dropzone-label class="drop-browse align-center">
+                    <span
+                      ><img src="assets/img/icons/img-drop.svg" alt="upload"
+                    /></span>
+                    <div class="drag-drop">
+                      <h6 class="drop-browse align-center">
+                        <span class="text-info me-1">Click to Replace </span> or Drag
+                        and Drop
+                      </h6>
+                    </div>
+
+                    <span class="text-muted">SVG, PNG, JPG</span>
+                  </ngx-dropzone-label>
+                  @for (f of files1; track f) {
+                    <ngx-dropzone-image-preview
+                      ngProjectAs="ngx-dropzone-preview"
+                      [file]="f"
+                      [removable]="true"
+                      (removed)="onRemove1(f)"
+                      >
+                    </ngx-dropzone-image-preview>
+                  }
+                </ngx-dropzone>
+              </div>
+            </div>
+            <div class="col-lg-12">
+              <div class="btn-path text-end">
+                <button
+                  *ngIf="isBeingEdited"
+                  (click)="cancelEdit()"
+                  href="javascript:void(0);"
+                  class="btn btn-cancel bg-primary-light me-3"
+                  >Cancel</button
+                  >
+                  <button *ngIf="isBeingEdited" (click)="saveSettings()" class="btn btn-primary">Save Changes</button>
+                  <button *ngIf="!isBeingEdited" (click)="enableEditSettings()" class="btn btn-primary">Edit Settings</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>

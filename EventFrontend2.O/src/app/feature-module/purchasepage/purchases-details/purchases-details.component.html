@@ -1,0 +1,309 @@
+<!-- Page Header -->
+<div class="card">
+    <div class="card-body">
+      <div class="page-header">
+        <h5 class="text-center mb-2">Purchases Details</h5>
+        <div class="content-invoice-header">
+          <div class="invoice-item invoice-item-one">
+            <div class="invoice-logo">
+              <!-- <img src="assets/img/newLogo2.png" alt="logo"> -->
+              <img [src]="companySettings.logo ? companySettings.logo : 'assets/img/newLogo2.png'" alt="logo">
+            </div>
+          </div>
+          <div class="text-center">
+            <h5>{{companySettings.name}}</h5>
+            <p>
+              <span class="text-muted">Address:</span>{{companySettings.address1}}<br>
+              {{companySettings.address2}} <br>
+              Contact# {{companySettings.phoneNumber}} {{companySettings.phoneNumber1 ? ', ' + companySettings.phoneNumber1 : ''}}<br>
+            </p>
+          </div>          
+          <div class="list-btn">
+            <ul class="filter-list">
+              <li>
+                <a class="btn btn-import me-2" href="javascript:window.print()"><span><i class="feather icon-printer me-2"></i>Print</span></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- /Page Header -->
+      <div class="row justify-content-center">
+        <div class="col-lg-12">
+          <div class="invoice-card">
+            <div class="card-bod">
+              <div class="card-table">
+                <div class="card-bod">
+                  <!-- Invoice Logo -->
+                  <div class="invoice-item invoice-item-one">
+                    <div class="row align-items-center">
+                      <div class="col-md-6">
+                        <div *ngIf="purchaseToView?.signature_img" class="invoice-logo">
+                          <img src="{{purchaseToView?.signature_img}}" alt="attchment">
+                        </div>
+                      </div>
+                      <!-- <div class="col-md-6">
+                        <div class="invoice-info">
+                          <h1 class="text-warning">{{paymentStatus}}</h1>
+                        </div>
+                      </div> -->
+                    </div>
+                  </div>
+                  <!-- /Invoice Logo -->
+  
+                  <!-- Invoice Date -->
+                  <div class="invoice-item invoice-item-date">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <p class="text-start invoice-details">
+                          Issue Date<span>: </span><strong>{{purchaseToView.purchase_date}}</strong> 
+                        </p>
+                      </div>
+                      <div class="col-md-4">
+                        <p class="text-start invoice-details">
+                          Invoice No<span>: </span><strong> {{purchaseToView.invoice_sr_no}} </strong> 
+                        </p>
+                      </div>
+                      <div class="col-md-4">
+                        <p class="text-start invoice-details">
+                          Pay To<span>: </span><strong> {{purchaseToView.vendor.name}} </strong>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /Invoice Date -->
+              
+                  <!-- Invoice Item -->
+                  <div class="invoice-item invoice-table-wrap">
+                    <div class="invoice-table-head">
+                      <h6>Items:</h6>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="table-responsive">
+                          <table class="table table-center table-hover mb-0">
+                            <thead class="thead-light">
+                              <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Unit</th>
+                                <th>Rate</th>
+                                <th>Discount</th>
+                                <th>Tax</th>
+                                <th>Amount</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let item of purchaseToView.products">
+                                <td>{{item.item}}</td>
+                                <td>{{item.quantity}}</td>
+                                <td>{{item.unit}}</td>
+                                <td>{{item.purchasePrice}}</td>
+                                <td>{{item.discount}}</td>
+                                <td>{{item.tax}}</td>
+                                <td>PKR{{item.amount}}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /Invoice Item -->
+  
+                  <!-- Terms & Conditions -->
+                  <div class="terms-conditions">
+                    <div class="row align-items-center justify-content-between">
+                      <div class="col-lg-6 col-md-6">
+                        <div class="invoice-terms align-center">
+                          <!-- <span class="invoice-terms-icon bg-white-smoke me-3">
+                            <i class="feather icon-file-text"></i>
+                          </span> -->
+                          <div class="invocie-note">
+                            <!-- <h6>Terms & Conditions</h6>
+                            <p class="mb-0">Authoritatively envisioneer business action items through parallel sources.</p> -->
+                          </div>
+                        </div>
+                        <div class="invoice-terms align-center">
+                          <!-- <span class="invoice-terms-icon bg-white-smoke me-3">
+                            <i class="feather icon-file-minus"></i>
+                          </span> -->
+                          <div class="invocie-note">
+                            <!-- <h6>Note</h6>
+                            <p class="mb-0">This is computer generated receipt and does not require physical signature.</p> -->
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-5 col-md-6">
+                        <div class="invoice-total-card">
+                          <div class="invoice-total-box">
+                            <div class="invoice-total-footer">
+                              <h4>Total Amount <span>PKR{{purchaseToView.total_amount}}</span></h4>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="invoice-sign">										
+                    <span class="d-block">Additional Notes</span>
+                    <p class="mb-0">{{purchaseToView.notes}}</p>
+                  </div>
+                  <!-- <div class="invoice-sign text-end">										
+                    <span class="d-block">Authorised Sign</span>
+                    <img class="img-fluid d-inline-block" src="assets/img/signature.png" alt="sign">
+                  </div> -->
+                  <!-- /Terms & Conditions -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Pay Now Modal -->
+  <!-- <div class="modal custom-modal fade pay-modal" id="paynow_modal" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header border-0 pb-0">
+          <div class="form-header modal-header-title text-start mb-0">
+            <h4 class="modal-title">Invoice <span>#INV 00001</span></h4>
+            <h5><span>Due Date : </span> 03 Jun 2023</h5>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+            
+          </button>
+        </div>
+        <div class="modal-body ">
+          <div class="row">
+            <div class="payment-heading">
+              <h5>Select a Payment Method</h5>
+            </div>
+            <div class="input-block mb-3 paynow-tab">
+              <ul class="nav nav-pills d-flex row" id="pills-tab" role="tablist">
+                <li class="nav-item col-sm-4" role="presentation">
+                  <button class="nav-link active cash" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Cash<i class="feather icon-dollar-sign"></i></button>
+                </li>
+                <li class="nav-item col-sm-4" role="presentation">
+                  <button class="nav-link cheque" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Cheque<i class="feather icon-file-text"></i></button>
+                </li>
+                <li class="nav-item col-sm-4" role="presentation">
+                  <button class="nav-link cheque"  data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">CreditCard<i class="feather icon-file-text"></i></button>
+                </li>
+              </ul>	
+            </div>	
+            <div class="tab-content pt-0" id="pills-tabContent">
+              <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                <div class="input-block mb-3">
+                  <label for="Amount">Amount <span class="text-danger"> *</span></label>
+                  <input type="text" class="form-control" placeholder="Enter Amount">	
+                </div>
+              </div>
+              <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                <div class="input-block mb-3">
+                  <label for="Amount">Amount <span class="text-danger"> *</span></label>
+                  <input type="text" class="form-control" placeholder="Enter Amount">	
+                </div>
+                <div class="input-block mb-3">
+                  <label for="Cheque">Cheque Number <span class="text-danger"> *</span></label>
+                  <input type="text" class="form-control" placeholder="Enter Cheque Number">	
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-back cancel-btn me-2">Cancel</a>
+          <a href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-primary paid-continue-btn">pay Now</a>
+        </div>
+      </div>
+    </div>
+  </div> -->
+  <!-- /Pay Now Modal -->
+  
+
+  <!-- Pay Now Modal -->
+<div class="modal custom-modal fade pay-modal" id="paynow_modal" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <div class="form-header modal-header-title text-start mb-0">
+          <h4 class="modal-title">Invoice <span>#INV 00001</span></h4>
+          <h5><span>Due Date : </span> 03 Jun 2023</h5>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="payment-heading">
+            <h5>Select a Payment Method</h5>
+          </div>
+          <div class="input-block mb-3 paynow-tab">
+            <ul class="nav nav-pills d-flex row" id="pills-tab" role="tablist">
+              <li class="nav-item col-sm-4" role="presentation">
+                <button class="nav-link active cash" id="pills-cash-tab" data-bs-toggle="pill" data-bs-target="#pills-cash" type="button" role="tab" aria-controls="pills-cash" aria-selected="true" (click)="setPaymentMethod('cash')">
+                  Cash <i class="feather icon-dollar-sign"></i>
+                </button>
+              </li>
+              <li class="nav-item col-sm-4" role="presentation">
+                <button class="nav-link cheque" id="pills-cheque-tab" data-bs-toggle="pill" data-bs-target="#pills-cheque" type="button" role="tab" aria-controls="pills-cheque" aria-selected="false" (click)="setPaymentMethod('cheque')">
+                  Cheque <i class="feather icon-file-text"></i>
+                </button>
+              </li>
+              <li class="nav-item col-sm-4" role="presentation">
+                <button class="nav-link credit-card" id="pills-credit-tab" data-bs-toggle="pill" data-bs-target="#pills-credit" type="button" role="tab" aria-controls="pills-credit" aria-selected="false" (click)="setPaymentMethod('creditCard')">
+                  Credit Card <i class="feather icon-credit-card"></i>
+                </button>
+              </li>
+            </ul>
+          </div>
+          <div class="tab-content pt-0" id="pills-tabContent">
+            <!-- Cash Payment -->
+            <div class="tab-pane fade show active" id="pills-cash" role="tabpanel" aria-labelledby="pills-cash-tab">
+              <div class="input-block mb-3">
+                <label for="cashAmount">Amount <span class="text-danger"> *</span></label>
+                <input type="text" class="form-control" placeholder="Enter Amount" [(ngModel)]="payment.amount">
+              </div>
+            </div>
+            <!-- Cheque Payment -->
+            <div class="tab-pane fade" id="pills-cheque" role="tabpanel" aria-labelledby="pills-cheque-tab">
+              <div class="input-block mb-3">
+                <label for="chequeAmount">Amount <span class="text-danger"> *</span></label>
+                <input type="text" class="form-control" placeholder="Enter Amount" [(ngModel)]="payment.amount">
+              </div>
+              <div class="input-block mb-3">
+                <label for="chequeNumber">Cheque Number <span class="text-danger"> *</span></label>
+                <input type="text" class="form-control" placeholder="Enter Cheque Number" [(ngModel)]="payment.chequeNumber">
+              </div>
+            </div>
+            <!-- Credit Card Payment -->
+            <div class="tab-pane fade" id="pills-credit" role="tabpanel" aria-labelledby="pills-credit-tab">
+              <div class="input-block mb-3">
+                <label for="creditAmount">Amount <span class="text-danger"> *</span></label>
+                <input type="text" class="form-control" placeholder="Enter Amount" [(ngModel)]="payment.amount">
+              </div>
+              <div class="input-block mb-3">
+                <label for="cardNumber">Card Number <span class="text-danger"> *</span></label>
+                <input type="text" class="form-control" placeholder="Enter Card Number" [(ngModel)]="payment.cardNumber">
+              </div>
+              <div class="input-block mb-3">
+                <label for="expiryDate">Expiry Date <span class="text-danger"> *</span></label>
+                <input type="text" class="form-control" placeholder="MM/YY" [(ngModel)]="payment.expiryDate">
+              </div>
+              <div class="input-block mb-3">
+                <label for="cvv">CVV <span class="text-danger"> *</span></label>
+                <input type="text" class="form-control" placeholder="Enter CVV" [(ngModel)]="payment.cvv">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-back cancel-btn me-2">Cancel</a>
+        <a href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-primary paid-continue-btn" (click)="processPayment()">Pay Now</a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /Pay Now Modal -->

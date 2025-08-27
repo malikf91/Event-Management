@@ -1,0 +1,576 @@
+<div class="col-xl-12">
+  <div class="card">
+    <div class="card-body">
+      <h4 class="header-title mb-4">Add Reservation</h4>
+
+      <ul class="nav nav-pills navtab-bg nav-justified">
+        <li class="nav-item">
+          <button
+            (click)="goToStage(1)"
+            data-bs-toggle="tab"
+            aria-expanded="false"
+            class="nav-link"
+            [class.active]="stage === 1"
+          >
+            Stage 1
+        </button>
+        </li>
+        <li class="nav-item">
+          <button
+            (click)="goToStage(2)"
+            data-bs-toggle="tab"
+            aria-expanded="true"
+            class="nav-link"
+            [class.active]="stage === 2"
+            [disabled]="isStageDisabled(2)"
+          >
+            Stage 2
+        </button>
+        </li>
+        <li class="nav-item">
+          <button
+            (click)="goToStage(3)"
+            data-bs-toggle="tab"
+            aria-expanded="false"
+            class="nav-link"
+            [class.active]="stage === 3"
+            [disabled]="isStageDisabled(3)"
+          >
+            Stage 3
+        </button>
+        </li>
+        <li class="nav-item">
+          <button
+            (click)="goToStage(4)"
+            data-bs-toggle="tab"
+            aria-expanded="false"
+            class="nav-link"
+            [class.active]="stage === 4"
+            [disabled]="isStageDisabled(4)"
+          >
+            Stage 4
+          </button>
+        </li>
+      </ul>
+
+  <div *ngIf="stage === 2" class="reservation-container">
+    <div class="card mb-0">
+      <div class="card-body">
+        <div class="content-page-header">
+          <h5>Add Reservation Details</h5>
+          <ul class="filter-list">
+            <li>
+              <button class="btn btn-primary mb-3 primary-btn" [disabled]="!detailsForm?.valid" (click)="saveDraft()">
+                <i class="fa fa-plus"></i> Save as Draft
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div class="row">
+          <div class="col-xl-8 col-lg-7 col-12">
+            <form [formGroup]="detailsForm" class="row">
+              <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="input-block mb-3">
+                  <label for="reservationName">Reservation Name <span class="text-danger">*</span></label>
+                  <input id="reservationName" type="text" class="form-control" formControlName="reservation_name" placeholder="Enter reservation name" />
+                  <div class="invalid-feedback d-block" *ngIf="detailsForm.get('reservation_name')?.hasError('required')">Required</div>
+                  <div class="invalid-feedback d-block" *ngIf="detailsForm.get('reservation_name')?.hasError('minlength')">Min 2 characters</div>
+                </div>
+              </div>
+
+              <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="input-block mb-3">
+                  <label for="contactNumber">Contact Number <span class="text-danger">*</span></label>
+                  <input id="contactNumber" type="text" class="form-control" formControlName="contact_number" placeholder="(###) ###-####" />
+                  <div class="invalid-feedback d-block" *ngIf="detailsForm.get('contact_number')?.hasError('required')">Required</div>
+                  <div class="invalid-feedback d-block" *ngIf="detailsForm.get('contact_number')?.hasError('pattern')">Invalid phone</div>
+                </div>
+              </div>
+
+              <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="input-block mb-3">
+                  <label for="altContactNumber">Alternate Contact Number</label>
+                  <input id="altContactNumber" type="text" class="form-control" formControlName="alt_contact_number" placeholder="Optional" />
+                  <div class="invalid-feedback d-block" *ngIf="detailsForm.get('alt_contact_number')?.hasError('pattern')">Invalid phone</div>
+                </div>
+              </div>
+
+              <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="input-block mb-3">
+                  <label for="eventType">Event Type <span class="text-danger">*</span></label>
+                  <mat-select id="eventType" formControlName="booking_type" class="select custom-mat-select" placeholder="Select event type">
+                    <mat-option *ngFor="let event of events" [value]="event.event_name">{{ event.event_name }}</mat-option>
+                  </mat-select>
+                  <div class="invalid-feedback d-block" *ngIf="detailsForm.get('booking_type')?.hasError('required')">Required</div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="input-block mb-3">
+                  <label for="description">Description</label>
+                  <textarea id="description" class="form-control" formControlName="description" rows="3" placeholder="Enter Reservation Description"></textarea>
+                </div>
+              </div>
+            </form>
+
+            <div class="text-center mt-3 btnAl">
+              <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
+                <button class="btn btn-secondary btnAll" (click)="prevStage()">
+                  <i class="fa fa-arrow-left"></i> Back
+                </button>
+                <span [matTooltip]="'Complete required fields'" #stage2Tip="matTooltip" [matTooltipDisabled]="isStage2Valid()">
+                  <button class="btn btn-primary btnAll" (click)="isStage2Valid() ? nextStage() : stage2Tip.show()" [disabled]="!isStage2Valid()">
+                    Next <i class="fa fa-arrow-right"></i>
+                  </button>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-4 col-lg-5 col-12">
+            <div class="card" style="position: sticky; top: 12px;">
+              <div class="card-body">
+                <h6 class="mb-3">Selection Summary</h6>
+                <div *ngIf="getSelectedSlots().length === 0" class="text-muted">No slot selected</div>
+                <div *ngFor="let s of getSelectedSlots(); let i = index" class="mb-2 p-2 border rounded">
+                  <div class="fw-semibold">Slot {{ i + 1 }}</div>
+                  <div>{{ formatSlotLabel(s) }}</div>
+                  <div class="text-muted">{{ formatSlotDate(s.date) }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+<div *ngIf="stage === 1" class="calendar-container">
+  
+  <div class="p-3">
+    <div class="mb-3 position-relative">
+      <label for="date" class="form-label">Reservation Date <span style="color: red;">*</span></label>
+      <div class="input-group">
+        <span class="input-group-text bg-light border-0">
+          <i class="bi bi-calendar-event text-primary"></i>
+        </span>
+          <input
+            id="date"
+            type="text"
+            name="date"
+            class="datetimepicker form-control"
+            placeholder="Select Date"
+            [(ngModel)]="reservation.date"
+            (ngModelChange)="updateCalendar()"
+            bsDatepicker [bsConfig]="{ adaptivePosition: true }"
+            [bsValue]="reservation.date"
+            />
+      </div>
+    </div>
+      <div class="table-responsive" *ngIf="isInitialized">
+        <table class="table bookingTable">
+          <thead>
+          <tr>
+            <th class="border-0"></th>
+            
+            <th *ngFor="let day of Days; let i = index">
+              <div class="day" [ngClass]="{'current': Date[i] === dateSelected}" 
+              >{{Date[i]}}</div>
+              <span>{{day}}</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let slotType of slotTypes; let i = index">
+            <th>{{slotType}}</th>
+            <td *ngFor="let day of Days; let j = index">
+                <div class="btnRow">
+                  <button class="btn specialBtnMRN" 
+                  [ngClass]="{'btnSelected': isSlotSelected(slotType, day, Date[j], monthNumber[j], 'Morning'),
+                    'slotDrafted': isSlotDrafted(slotType, day, Date[j], monthNumber[j], 'Morning'),
+                    'slotBooked': isSlotBooked(slotType, day, Date[j], monthNumber[j], 'Morning')}"
+                  [disabled]= "isSlotBooked(slotType, day, Date[j], monthNumber[j], 'Morning') || !canSelectSlot(slotType, day, Date[j], monthNumber[j], 'Morning')"
+                  (click)="markSlotSelected(slotType, day, Date[j], monthNumber[j], 'Morning')"
+                  >Day</button>
+                  <button class="btn specialBtnEVN" 
+                  [ngClass]="{'btnSelected': isSlotSelected(slotType, day, Date[j], monthNumber[j], 'Evening'),
+                    'slotDrafted': isSlotDrafted(slotType, day, Date[j], monthNumber[j], 'Evening'),
+                    'slotBooked': isSlotBooked(slotType, day, Date[j], monthNumber[j], 'Evening')}"
+                  [disabled]= "isSlotBooked(slotType, day, Date[j], monthNumber[j], 'Evening') || !canSelectSlot(slotType, day, Date[j], monthNumber[j], 'Evening')"
+                  (click)="markSlotSelected(slotType, day, Date[j], monthNumber[j], 'Evening')"
+                  >Night</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+      </table>
+    </div>
+    <div *ngIf="!isInitialized" class="text-center py-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2">Loading calendar...</p>
+    </div>
+  </div>
+    
+    <div class="btnAl">
+        
+        <button [routerLink]="routes.reservationList" class="btn btn-primary btnAll">
+          <i class="fa fa-times" style="font-size:19px;"></i> Cancel
+        </button>
+        <span [matTooltip]="'Select a slot first'" #stage1Tip="matTooltip" [matTooltipDisabled]="isStage1Valid()">
+        <button class="btn btn-primary btnAll" (click)="isStage1Valid() ? nextStage() : stage1Tip.show()"
+        [disabled]="!isStage1Valid()">
+        Next <i class="fa fa-arrow-right"></i>
+      </button>
+      </span>
+    </div>
+  </div>
+
+  <!-- Stage 3: Select Menus -->
+  <div class="mt-5" *ngIf="stage === 3">
+    <div class="page-header">
+      <div class="content-page-header">
+        <h5>Menu Selection</h5>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xl-8 col-lg-7 col-12">
+        <div class="row g-3 align-items-center mb-3">
+          <div class="col-sm-8">
+            <div class="input-block mb-0">
+              <label for="menuSearch" class="form-label">Search Menus</label>
+              <input id="menuSearch" type="text" class="form-control" [formControl]="menuSearch" placeholder="Search by name or description" />
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="input-block mb-0">
+              <label for="numPersons" class="form-label">Number of Persons <span class="text-danger">*</span></label>
+              <input id="numPersons" type="text" class="form-control" inputmode="numeric" pattern="[0-9]*" [formControl]="personsControl" placeholder="Enter number of persons" />
+              <div class="invalid-feedback d-block" *ngIf="personsControl?.hasError('required')">Required</div>
+              <div class="invalid-feedback d-block" *ngIf="personsControl?.hasError('pattern')">Enter a valid positive number</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6" *ngFor="let menu of filteredMenus">
+            <div class="card menu-card mb-3" [ngClass]="{'selected-menu': reservation.selectedMenu?.menu_id === menu.menu_id}" (click)="selectMenu(menu)" style="cursor: pointer; transition: 0.3s; border: 2px solid transparent;">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                  <h5 class="card-title mb-1">{{ menu.menu_name }}</h5>
+                  <span class="badge bg-primary" *ngIf="reservation.selectedMenu?.menu_id === menu.menu_id">Selected</span>
+                </div>
+                <p class="card-text text-muted mb-2">{{ menu.description }}</p>
+                <div class="small text-muted">Includes {{ (menu.menu_item_ids?.length || 0) }} items</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Selected menu items UI removed per request -->
+
+        <div class="mt-3 btnAl">
+          <div class="d-flex align-items-center justify-content-between w-100">
+            <button class="btn btn-secondary btnAll" (click)="prevStage()">
+              <i class="fa fa-arrow-left"></i> Back
+            </button>
+            <span [matTooltip]="'Select a menu and set persons'" #stage3Tip="matTooltip" [matTooltipDisabled]="isStage3Valid() && personsControl.valid">
+              <button class="btn btn-primary btnAll" (click)="(isStage3Valid() && personsControl.valid) ? nextStage() : stage3Tip.show()" [disabled]="!(isStage3Valid() && personsControl.valid)">
+                Next <i class="fa fa-arrow-right"></i>
+              </button>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-4 col-lg-5 col-12">
+        <div class="card" style="position: sticky; top: 12px;">
+          <div class="card-body">
+            <h6 class="mb-3">Selection Summary</h6>
+            <div *ngIf="getSelectedSlots().length === 0" class="text-muted">No slot selected</div>
+            <div *ngFor="let s of getSelectedSlots(); let i = index" class="mb-2 p-2 border rounded">
+              <div class="fw-semibold">Slot {{ i + 1 }}</div>
+              <div>{{ formatSlotLabel(s) }}</div>
+              <div class="text-muted">{{ formatSlotDate(s.date) }}</div>
+            </div>
+            <div class="mt-2">
+              <div class="d-flex justify-content-between"><span>Event Type</span><span>{{ detailsForm?.value?.booking_type || '-' }}</span></div>
+            </div>
+            <div class="mt-2 border-top pt-2">
+              <div class="d-flex justify-content-between"><span>Menu</span><span>{{ reservation?.selectedMenu?.menu_name || '-' }}</span></div>
+              <div class="d-flex justify-content-between"><span>Persons</span><span>{{ personsControl?.value || 0 }}</span></div>
+              <div class="d-flex justify-content-between fw-semibold"><span>Total</span><span>PKR {{ getCurrentTotal() }}</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stage 4: Final Review -->
+  <div *ngIf="stage === 4">
+    <div class="page-header">
+      <div class="content-page-header">
+        <h5>Final Review & Additional Services</h5>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Main Content -->
+      <div class="col-xl-8 col-lg-7 col-12">
+        <div class="card">
+          <div class="card-body">
+            
+            <!-- Section 1: Menu Items Customization -->
+            <div class="mb-4">
+              <h6 class="card-title mb-3">
+                <i class="fa fa-utensils me-2"></i>Customize Menu Items
+              </h6>
+              <div class="alert alert-info">
+                <i class="fa fa-info-circle me-2"></i>
+                You can add or remove individual items from your selected menu
+              </div>
+              
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="input-block mb-0">
+                    <label class="form-label">Add Menu Items</label>
+                    <mat-form-field class="w-100">
+                      <mat-label>Search and select items</mat-label>
+                      <input type="text"
+                             placeholder="Type to search menu items..."
+                             aria-label="MenuItem"
+                             matInput
+                             [formControl]="control"
+                             [matAutocomplete]="auto">
+                      <mat-autocomplete #auto="matAutocomplete">
+                        @for (option of filteredOptions | async; track option) {
+                          <mat-option [value]="option" (onSelectionChange)="onMenuItemSelect(option)">
+                            {{option}}
+                          </mat-option>
+                        }
+                      </mat-autocomplete>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Selected Menu Items Grid -->
+              <div class="mt-3">
+                <h6 class="text-muted mb-2">Selected Items:</h6>
+                <div class="row g-2">
+                  <div *ngFor="let item of menuItems" class="col-md-6 col-lg-4">
+                    <div class="card border">
+                      <div class="card-body p-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                          <div>
+                            <h6 class="mb-1">{{ item.item_name }}</h6>
+                            <small class="text-muted">Menu Item</small>
+                          </div>
+                          <button class="btn btn-sm btn-outline-danger" (click)="removeMenuItem(item)">
+                            <i class="fa fa-times"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngIf="menuItems.length === 0" class="col-12">
+                    <div class="text-center py-4 text-muted">
+                      <i class="fa fa-utensils fa-2x mb-2"></i>
+                      <p>No custom items added yet</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 2: Additional Services -->
+            <div class="mb-4">
+              <h6 class="card-title mb-3">
+                <i class="fa fa-plus-circle me-2"></i>Additional Services
+              </h6>
+              
+              <div class="row g-3">
+                <div *ngFor="let service of additionalServices" class="col-md-6 col-lg-4">
+                  <div class="card border h-100" 
+                       [ngClass]="{ 'border-primary bg-light': service.selected }"
+                       (click)="toggleAdditionalService(service)"
+                       style="cursor: pointer; transition: all 0.3s ease;">
+                    <div class="card-body p-3">
+                      <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                          <h6 class="mb-1">{{ service.additional_service_name }}</h6>
+                          <p class="text-primary mb-2">PKR {{ service.price || 0 }}</p>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" 
+                                   [checked]="service.selected" 
+                                   (change)="toggleAdditionalService(service)">
+                            <label class="form-check-label small">
+                              {{ service.selected ? 'Selected' : 'Select Service' }}
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Selected Services Details -->
+              <div *ngIf="checkService()" class="mt-4">
+                <h6 class="text-muted mb-3">Selected Services Details:</h6>
+                <div class="table-responsive">
+                  <table class="table table-bordered">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Service</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let service of additionalServicesSelected">
+                        <td>{{ service.additional_service_name }}</td>
+                        <td>
+                          <input type="number" class="form-control form-control-sm" 
+                                 [(ngModel)]="service.price" (input)="updateTotal(service)">
+                        </td>
+                        <td>
+                          <input type="number" class="form-control form-control-sm" 
+                                 [(ngModel)]="service.quantity" (input)="updateTotal(service)" min="1">
+                        </td>
+                        <td class="fw-bold">PKR {{ service.totalPrice || 0 }}</td>
+                        <td>
+                          <button class="btn btn-sm btn-outline-danger" (click)="toggleAdditionalService(service)">
+                            <i class="fa fa-trash"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 3: Discounts & Notes -->
+            <div class="mb-4">
+              <h6 class="card-title mb-3">
+                <i class="fa fa-percent me-2"></i>Discounts & Notes
+              </h6>
+              
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="input-block mb-0">
+                    <label class="form-label">Discount Amount (PKR)</label>
+                    <input type="number" class="form-control" 
+                           [(ngModel)]="reservation.discount" 
+                           placeholder="0" min="0" 
+                           (input)="validateDiscount()">
+                    <div class="invalid-feedback d-block" *ngIf="discountError">
+                      {{ discountError }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-3">
+                <div class="input-block mb-0">
+                  <label class="form-label">Additional Notes</label>
+                  <textarea class="form-control" rows="3" 
+                            [(ngModel)]="reservation.notes"
+                            placeholder="Any special requirements or notes..."></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sticky Summary Sidebar -->
+      <div class="col-xl-4 col-lg-5 col-12">
+        <div class="card position-sticky" style="top: 80px;">
+          <div class="card-header">
+            <h6 class="mb-0">
+              <i class="fa fa-receipt me-2"></i>Reservation Summary
+            </h6>
+          </div>
+          <div class="card-body">
+            <!-- Selected Slots -->
+            <div class="mb-3">
+              <h6 class="text-muted small mb-2">SELECTED SLOTS</h6>
+              <div *ngIf="getSelectedSlots().length === 0" class="text-muted small">No slot selected</div>
+              <div *ngFor="let s of getSelectedSlots(); let i = index" class="mb-2 p-2 border rounded">
+                <div class="d-flex justify-content-between">
+                  <span class="small">{{ s.hall }} · {{ s.slot }}</span>
+                  <span class="small text-muted">{{ formatSlotDate(s.date) }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Event Details -->
+            <div class="mb-3 border-top pt-3">
+              <h6 class="text-muted small mb-2">EVENT DETAILS</h6>
+              <div class="d-flex justify-content-between"><span class="small">Event Type</span><span class="small">{{ detailsForm?.value?.booking_type || '-' }}</span></div>
+              <div class="d-flex justify-content-between"><span class="small">Contact</span><span class="small">{{ detailsForm?.value?.contact_number || '-' }}</span></div>
+            </div>
+
+            <!-- Menu Details -->
+            <div class="mb-3 border-top pt-3">
+              <h6 class="text-muted small mb-2">MENU DETAILS</h6>
+              <div class="d-flex justify-content-between"><span class="small">Menu</span><span class="small">{{ reservation?.selectedMenu?.menu_name || '-' }}</span></div>
+              <div class="d-flex justify-content-between"><span class="small">Persons</span><span class="small">{{ personsControl?.value || 0 }}</span></div>
+              <div class="d-flex justify-content-between"><span class="small">Menu Price</span><span class="small">PKR {{ reservation?.selectedMenu?.price || 0 }}</span></div>
+            </div>
+
+            <!-- Additional Services -->
+            <div *ngIf="checkService()" class="mb-3 border-top pt-3">
+              <h6 class="text-muted small mb-2">ADDITIONAL SERVICES</h6>
+              <div *ngFor="let service of additionalServicesSelected" class="d-flex justify-content-between">
+                <span class="small">{{ service.additional_service_name }}</span>
+                <span class="small">PKR {{ service.totalPrice || 0 }}</span>
+              </div>
+            </div>
+
+            <!-- Price Breakdown -->
+            <div class="border-top pt-3">
+              <div class="d-flex justify-content-between mb-2">
+                <span>Menu Total:</span>
+                <span>PKR {{ reservation?.selectedMenu?.finalPrice || 0 }}</span>
+              </div>
+              <div *ngIf="checkService()" class="d-flex justify-content-between mb-2">
+                <span>Services Total:</span>
+                <span>PKR {{ totalAdditionalPrice || 0 }}</span>
+              </div>
+              <div *ngIf="reservation.discount > 0" class="d-flex justify-content-between mb-2 text-success">
+                <span>Discount:</span>
+                <span>-PKR {{ reservation.discount || 0 }}</span>
+              </div>
+              <div class="d-flex justify-content-between fw-bold fs-5 border-top pt-2">
+                <span>Total Payable:</span>
+                <span class="text-primary">PKR {{ getGrandTotal() }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="text-center mt-3 btnAl">
+      <button class="btn btn-secondary btnAll" (click)="prevStage()">
+        <i class="fa fa-arrow-left" style="font-size:19px;"></i> Back
+      </button>
+      <button class="btn btn-primary btnAll" (click)="saveReservation()" [disabled]="!isStage4Valid()">
+        Finish <i class="fa fa-check"></i>
+      </button>
+    </div>
+  </div>
+
+</div>
+</div>
+</div>

@@ -1,0 +1,367 @@
+
+<div class="row">
+  <div class="col-xl-3 col-sm-6 col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="dash-widget-header">
+          <span class="dash-widget-icon bg-2">
+            <i class="fas fa-users"></i>
+          </span>
+          <div class="dash-count">
+            <div class="dash-title">Persons Served</div>
+            <div class="dash-counts">
+              <p>{{total_people_served}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="progress progress-sm mt-3">
+          <div
+            class="progress-bar bg-6"
+            role="progressbar"
+            [style.width.%]="pct_total_people_served_last_month"
+            aria-valuenow="75"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          ></div>
+        </div>
+        <p class="text-muted mt-3 mb-0">
+          <span
+          [ngClass]="pct_total_people_served_last_month >= 0 ? 'text-success' : 'text-danger'"  
+            ><i
+            [ngClass]="pct_total_people_served_last_month >= 0 ? 'fas fa-arrow-up' : 'fas fa-arrow-down'" 
+            ></i>{{pct_total_people_served_last_month}}%</span
+          >
+          since last month
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-sm-6 col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="dash-widget-header">
+          <span class="dash-widget-icon bg-3">
+            <i class="fas fa-file-alt"></i>
+          </span>
+          <div class="dash-count">
+            <div class="dash-title">Persons Remaining</div>
+            <div class="dash-counts">
+              <p>{{people_to_be_served}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="progress progress-sm mt-3">
+          <div
+            class="progress-bar bg-7"
+            role="progressbar"
+            [style.width.%]="-pct_people_to_be_served_last_month"
+            aria-valuenow="75"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          ></div>
+        </div>
+        <p class="text-muted mt-3 mb-0">
+          <span [ngClass]="pct_people_to_be_served_last_month >= 0 ? 'text-success' : 'text-danger'" class="me-1"
+            ><i [ngClass]="pct_people_to_be_served_last_month >= 0 ? 'fas fa-arrow-up' : 'fas fa-arrow-down'" class="me-1"
+            ></i>{{pct_people_to_be_served_last_month}}%</span
+          >
+          since last month
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-sm-6 col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="dash-widget-header">
+          <span class="dash-widget-icon bg-1">
+            <!-- <i class="fas fa-dollar-sign"></i> -->
+            <!-- <i class="fas">&#8360;</i> -->
+            <i class="far fa-file"></i>
+          </span>
+          <div class="dash-count">
+            <div class="dash-title">Reservations Completed</div>
+            <div class="dash-counts">
+              <p>{{total_reservations_completed}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="progress progress-sm mt-3">
+          <div
+            class="progress-bar bg-5"
+            role="progressbar"
+            style="width: 75%"
+            aria-valuenow="75"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          ></div>
+        </div>
+        <p class="text-muted mt-3 mb-0">
+          <span class="text-danger me-1"
+            ><i class="fas fa-arrow-down me-1"></i>1.15%</span
+          >
+          since last month
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-sm-6 col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="dash-widget-header">
+          <span class="dash-widget-icon bg-4">
+            <i class="far fa-file"></i>
+          </span>
+          <div class="dash-count">
+            <div class="dash-title">Total Reservations</div>
+            <div class="dash-counts">
+              <p>{{reservations_this_month}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="progress progress-sm mt-3">
+          <div
+            class="progress-bar bg-8"
+            role="progressbar"
+            [style.width.%]="pct_reservations_last_month"
+            aria-valuenow="75"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          ></div>
+        </div>
+        <p class="text-muted mt-3 mb-0">
+          <span [ngClass]="pct_reservations_last_month >= 0 ? 'text-success' : 'text-danger'" class="me-1"
+            ><i [ngClass]="pct_reservations_last_month >= 0 ? 'fas fa-arrow-up' : 'fas fa-arrow-down'" class="me-1"
+            ></i>{{pct_reservations_last_month}}%</span
+          >
+          since last month
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xl-7 d-flex">
+    <div class="card flex-fill">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="card-title">Sales Analytics</h5>
+
+          <div class="dropdown">
+            <label
+              class="btn btn-white-label btn-sm"
+              type="label"
+              aria-expanded="false"
+            >
+              Monthly
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="card-body" *ngIf="chartOptions?.series">
+        <div
+          class="d-flex align-items-center justify-content-between flex-wrap flex-md-nowrap"
+        >
+          <div class="w-md-100 d-flex align-items-center mb-3 flex-wrap">
+            <div>
+              <span>Total Income</span>
+              <p class="h4 text-success me-5">PKR:{{totalIncome}}</p>
+            </div>
+            <div>
+              <span>Total Expense</span>
+              <p class="h4 text-danger me-5">PKR:{{totalExpense}}</p>
+            </div>
+            <div>
+              <span>Net Profit</span>
+              <p class="h4 text-primary me-5">PKR:{{profit}}</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="chart" class="sales_chart">
+          <apx-chart
+            [series]="chartOptions.series"
+            [chart]="chartOptions.chart"
+            [dataLabels]="chartOptions.dataLabels"
+            [plotOptions]="chartOptions.plotOptions"
+            [yaxis]="chartOptions.yaxis"
+            [legend]="chartOptions.legend"
+            [fill]="chartOptions.fill"
+            [stroke]="chartOptions.stroke"
+            [xaxis]="chartOptions.xaxis"
+          ></apx-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-5 d-flex">
+    <div class="card flex-fill">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="card-title">Invoice Analytics</h5>
+          <div class="dropdown">
+            <label
+              class="btn btn-white-label btn-sm"
+              type="label"
+              aria-expanded="false"
+            >
+              Monthly
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="card-body" *ngIf="chartOptions2?.series">
+        <div id="chart">
+          <apx-chart
+            [series]="chartOptions2.series"
+            [chart]="chartOptions2.chart"
+            [responsive]="chartOptions2.responsive"
+            [legend]="chartOptions2.legend"
+          ></apx-chart>
+        </div>
+        <div class="text-center text-muted">
+          <div class="row">
+            <div class="col-4">
+              <div class="mt-4">
+                <p class="mb-2 text-truncate">
+                  <i class="fas fa-circle text-success me-1"></i> Income
+                </p>
+                <h5>PKR:{{totalIncome}}</h5>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="mt-4">
+                <p class="mb-2 text-truncate">
+                  <i class="fas fa-circle text-danger me-1"></i> Expense
+                </p>
+                <h5>PKR:{{totalExpense}}</h5>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="mt-4">
+                <p class="mb-2 text-truncate">
+                  <i class="fas fa-circle text-primary me-1"></i> Profit
+                </p>
+                <h5>PKR:{{profit}}</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12 col-sm-6">
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col">
+            <h5 class="card-title">Upcoming Reservations</h5>
+          </div>
+          <div class="col-auto">
+            <a
+              [routerLink]="routes.reservationList"
+              class="btn-right btn btn-sm btn-outline-primary"
+            >
+              View All
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <div class="progress progress-md rounded-pill mb-3">
+            <div
+              class="progress-bar bg-success"
+              role="progressbar"
+              style="width: 47%"
+              aria-valuenow="47"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            ></div>
+            <div
+              class="progress-bar bg-warning"
+              role="progressbar"
+              style="width: 28%"
+              aria-valuenow="28"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            ></div>
+            <div
+              class="progress-bar bg-danger"
+              role="progressbar"
+              style="width: 15%"
+              aria-valuenow="15"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            ></div>
+            <div
+              class="progress-bar bg-info"
+              role="progressbar"
+              style="width: 10%"
+              aria-valuenow="10"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            ></div>
+          </div>
+          <div class="row">
+            <div class="col-auto">
+              <i class="fas fa-circle text-success me-1"></i> Paid
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-circle text-warning me-1"></i> Unpaid
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-circle text-danger me-1"></i> Overdue
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-circle text-info me-1"></i> Draft
+            </div>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-stripped table-hover">
+            <thead class="thead-light">
+              <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Booking Name</th>
+                <th>Contact Number</th>
+                <th>Booking Type</th>
+                <th>Hall</th>
+                <th>Status</th>
+                <th class="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (data of upcominReservations; track data; let i = $index) {
+              <tr *ngIf="data.status !== 'CANCELLED'">
+                <td>
+                  <h2>{{data.sNo}}</h2>
+                </td>
+                <td>{{data.dashboardDate}}</td>
+                <td>{{data.reservation_name}}</td>
+                <td>{{data.contact_number}}</td>
+                <td>{{data.booker_type}}</td>
+                <td>{{data.SLOT.hall}}</td>
+                <td><span class="badge" [ngClass]="{'bg-bg-success-light': data.status === 'completed', 'bg-danger-light': data.status !== 'completed'}"
+                >{{data.status || 'Pending'}}</span></td>
+                <td class="text-right">
+                  <a
+                    class="dropdown-item"
+                    [routerLink]="routes.viewInvoice"
+                    ><i class="far fa-eye me-2"></i></a>
+                </td>
+              </tr>
+            }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

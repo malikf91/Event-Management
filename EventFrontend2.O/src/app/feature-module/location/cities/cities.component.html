@@ -1,0 +1,259 @@
+<!-- Page Header -->
+<div class="page-header">
+  <div class="content-page-header ">
+    <h5>Additional Services</h5>
+    <div class="list-btn">
+      <ul class="filter-list">
+        <!-- <li>
+          <a (click)="openContent()"  (keydown.enter)="openContent()" tabindex="0" matTooltip="Filter" href="javascript:void(0);"
+            class="btn btn-filters w-auto popup-toggle"><span class="me-2"><img
+          src="assets/img/icons/filter-icon.svg" alt="img"></span>Filter </a>
+        </li>
+        <li>
+          <a class="btn-filters" matTooltip="Settings" href="javascript:void(0);"><span><i
+          class="feather icon-settings"></i></span> </a>
+        </li> -->
+        <li class="top-nav-search mx-2">
+          <div class="position-relative">
+            <input
+              name="search"
+              (input)="searchCustomers()"
+              [(ngModel)]="queryString"
+              type="text"
+              class="form-control pe-5"
+              placeholder="Search here"
+            />
+            <button
+              type="button"
+              class="btn position-absolute top-50 end-0 translate-middle-y me-2 p-0 border-0 bg-transparent"
+            >
+              <img src="assets/img/icons/search.svg" alt="img" />
+            </button>
+          </div>
+        </li>
+        <li>
+        <li>
+          <a class="btn btn-primary" href="javascript:void(0);" data-bs-toggle="modal"
+            data-bs-target="#add_service"><i class="fa fa-plus-circle me-2" aria-hidden="true"></i>Add Service</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!-- /Page Header -->
+
+
+  <!-- Table -->
+  <div class="row">
+    <div class="col-sm-12">
+      <div class=" card-table">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table matSort (matSortChange)="sortData($event)"
+              class="table table-stripped table-hover datatable">
+              <thead class="thead-light">
+                <tr>
+                  <th mat-sort-header="sNo">#</th>
+                  <th mat-sort-header="countryName">Service Name</th>
+                  <th mat-sort-header="servciceNameUrdu">نام (اردو)</th>
+                  <th mat-sort-header="stateName">Category</th>
+                  <th mat-sort-header="cityName">Price</th>
+                  <th >Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (service of services; track service; let i = $index) {
+                  <tr>
+                    <td>{{service.sNo}}</td>
+                    <td>
+                      <h2>
+                        </h2>{{service.additional_service_name}}
+                      </td>
+                      <td>{{service.additional_service_name_urdu}}</td>
+                      <td>{{service.category}}</td>
+                      <td>{{service.price}}</td>
+                      <td class="d-flex align-items-center">
+                        <a class=" btn-action-icon me-2" href="javascript:void(0);" data-bs-toggle="modal"
+                          data-bs-target="#edit_service"><i class="feather icon-edit" (click)="setServiceToEdit(service)"></i></a>
+                          <a class=" btn-action-icon" href="javascript:void(0);" data-bs-toggle="modal"
+                            data-bs-target="#delete_modal"><i class="feather icon-trash-2" (click)="setServiceToDelete(service)"></i></a>
+                          </td>
+                        </tr>
+                      }
+
+                    </tbody>
+                  </table>
+
+                </div>
+                <app-custom-pagination></app-custom-pagination>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /Table -->
+
+        <!-- Add Items Modal -->
+        <div class="modal custom-modal fade" id="add_service" role="dialog">
+          <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content">
+              <div class="modal-header border-0 pb-0">
+                <div class="form-header modal-header-title text-start mb-0">
+                  <h4 class="mb-0">Add Additional Service</h4>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="card-body">
+                      <div class="form-groups-item border-0 pb-0">
+                        <div class="row">
+                          <div class="col-lg-12 col-md-6 col-sm-12">
+                            <div class="input-block mb-3">
+                              <label for="Country ">Service Name <span class="text-danger">*</span></label>
+                              <input type="text" class="form-control" placeholder="Enter Service Name" [(ngModel)]="newService.additional_service_name">
+                            </div>
+                          </div>
+                          <div class="col-lg-12 col-md-6 col-sm-12">
+                            <div class="input-block mb-3">
+                              <label for="state-name">Name (اردو)</label>
+                              <input type="text" class="form-control" placeholder="اردو میں نام لکھیں" [(ngModel)]="newService.additional_service_name_urdu">
+                            </div>
+                          </div>                          
+                          <div class="col-lg-12 col-md-6 col-sm-12">
+                            <div class="input-block mb-3">
+                              <label for="state-name">Category</label>
+                              <mat-select [(ngModel)]="newService.category" [ngModelOptions]="{standalone: true}"
+                                class="select custom-mat-select">
+                                @for (category of categories; track category; let i = $index) {
+                                  <mat-option value="{{category.category}}">{{category.category}}</mat-option>
+                                }
+                              </mat-select>
+                            </div>
+                          </div>
+                          <div class="col-lg-12 col-md-6 col-sm-12">
+                            <div class="input-block">
+                              <label for="city-name">Price <span class="text-danger">*</span></label>
+                              <input type="number" class="form-control" placeholder="Enter Price" [(ngModel)]="newService.price">
+                            </div>
+                          </div>
+                          <div>
+                            <div class="input-block mb-3 mt-3">
+                              <label for="state-name">Description</label>
+                              <textarea class="form-control" rows="4" placeholder="Enter Description" [(ngModel)]="newService.description"></textarea>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <a href="javascript:void(0);" data-bs-dismiss="modal"
+                class="btn btn-back paid-cancel-btn me-2">Cancel</a>
+                <button [disabled]="(!newService.additional_service_name || !newService.price)" href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-primary paid-continue-btn" (click)="addService()">Add
+                Service</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /Add Items Modal -->
+
+        <!-- Edit Items Modal -->
+        <div class="modal custom-modal fade" id="edit_service" role="dialog">
+          <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content">
+              <div class="modal-header border-0 pb-0">
+                <div class="form-header modal-header-title text-start mb-0">
+                  <h4 class="mb-0">Edit Service</h4>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="card-body">
+                      <div class="form-groups-item border-0 pb-0">
+                        <div class="row">
+                          <div class="col-lg-12 col-md-6 col-sm-12">
+                            <div class="input-block mb-3">
+                              <label for="Country ">Service Name <span class="text-danger">*</span></label>
+                              <input type="text" class="form-control" placeholder="Enter Service Name" [(ngModel)]="serviceToEdit.additional_service_name">
+                            </div>
+                          </div>
+                          <div class="col-lg-12 col-md-6 col-sm-12">
+                            <div class="input-block mb-3">
+                              <label for="state-name">Name (اردو)</label>
+                              <input type="text" class="form-control" placeholder="اردو میں نام لکھیں" [(ngModel)]="serviceToEdit.additional_service_name_urdu">
+                            </div>
+                          </div>
+                          <div class="col-lg-12 col-md-6 col-sm-12">
+                            <div class="input-block mb-3">
+                              <label for="state-name">Category</label>
+                              <mat-select [(ngModel)]="serviceToEdit.category" [ngModelOptions]="{standalone: true}"
+                                class="select custom-mat-select">
+                                @for (category of categories; track category; let i = $index) {
+                                  <mat-option value="{{category.category}}">{{category.category}}</mat-option>
+                                }
+                              </mat-select>
+                            </div>
+                          </div>
+                          <div class="col-lg-12 col-md-6 col-sm-12">
+                            <div class="input-block">
+                              <label for="city-name">Price <span class="text-danger">*</span></label>
+                              <input type="number" class="form-control" placeholder="Enter Price" [(ngModel)]="serviceToEdit.price">
+                            </div>
+                          </div>
+                          <div class="col-lg-12 col-md-6 col-sm-12">
+                            <div class="input-block mb-3 mt-3">
+                              <label for="state-name">Description</label>
+                              <textarea class="form-control" rows="4" placeholder="Enter Description" [(ngModel)]="serviceToEdit.description"></textarea>
+                            </div>
+                          </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <a href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-back cancel-btn me-2">Cancel</a>
+                  <button [disabled]="(!serviceToEdit.additional_service_name || !serviceToEdit.price)" href="javascript:void(0);" data-bs-dismiss="modal"
+                  class="btn btn-primary paid-continue-btn" (click)="updateService()">Update</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /Edit Items Modal -->
+
+          <!-- Delete Items Modal -->
+          <div class="modal custom-modal fade" id="delete_modal" role="dialog">
+            <div class="modal-dialog modal-dialog-centered modal-md">
+              <div class="modal-content">
+                <div class="modal-body">
+                  <div class="form-header">
+                    <h3>Delete Service</h3>
+                    <p>Are you sure want to delete?</p>
+                  </div>
+                  <div class="modal-btn delete-action">
+                    <div class="row">
+                      <div class="col-6">
+                        <button type="reset" data-bs-dismiss="modal"
+                        class="w-100 btn btn-primary paid-continue-btn" (click)="deleteService()">Delete</button>
+                      </div>
+                      <div class="col-6">
+                        <button type="submit" data-bs-dismiss="modal"
+                        class="w-100 btn btn-primary paid-continue-btn">Cancel</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /Delete Items Modal -->

@@ -1,0 +1,362 @@
+<!-- Page Header -->
+<div class="page-header">
+  <div class="content-page-header ">
+    <h5>Salary</h5>
+    <div class="list-btn">
+      <ul class="filter-list">
+        <li>
+          <a class="btn btn-primary" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#calculate_salary"><i
+          class="fas fa-money-bill-alt me-2" aria-hidden="true"></i>Calculate Salary</a>
+        </li>
+        <li>
+          <a class="btn btn-primary" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#add_salary"><i
+          class="fa fa-plus-circle me-2" aria-hidden="true"></i>Add Salary</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<!-- /Page Header -->
+
+<!-- Table -->
+<div class="row">
+  <div class="col-sm-12">
+    <div class=" card-table">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table matSort
+            (matSortChange)="sortData($event)"
+            class="table table-center table-hover datatable">
+            <thead class="thead-light">
+              <tr>
+                <th  mat-sort-header="id">#</th>
+                <th mat-sort-header="category">Account Name</th>
+                <!-- <th mat-sort-header="total">Phone Number</th> -->
+                <th mat-sort-header="salary">Fixed Salary</th>
+                <th mat-sort-header="variableSalary">Variable Salary</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (data of salaries; track data; let i = $index) {
+                <tr>
+                  <td>{{data.sNo}}</td>
+                  <td><a href="" class="product-list-item-img"><span>{{data.vendor?.name}}</span></a></td>
+                  <!-- <td>{{data.vendor?.phone}}</td> -->
+                  <td>{{data.amount}}</td>
+                  <td>{{data.variableAmount}}</td>
+                  <td class="d-flex align-items-center">
+                    <a class=" btn-action-icon me-2"  href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#edit_salary" (click)="setSalaryToEdit(data)"><i class="feather icon-edit"></i></a>
+                    <a class=" btn-action-icon" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#delete_modal" (click)="setSalaryToDelete(data)"><i class="feather icon-trash-2"></i></a>
+                  </td>
+                </tr>
+              }
+
+            </tbody>
+          </table>
+
+        </div>
+        <app-custom-pagination></app-custom-pagination>
+      </div>
+    </div>
+  </div>
+</div>
+    <!-- /Table -->
+    <!-- Add Units Modal -->
+    <div class="modal custom-modal fade" id="add_salary" role="dialog" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+          <div class="modal-header border-0 pb-0">
+            <div class="form-header modal-header-title text-start mb-0">
+              <h4 class="mb-0">Add Salary</h4>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-lg-12 col-md-6 col-sm-12">
+                <div class="input-block">
+                  <mat-form-field class="w-100">
+                    <mat-label>Account <span class="text-danger">*</span></mat-label>
+                    <input type="text"
+                           placeholder="Select Account"
+                           aria-label="Account Name"
+                           matInput
+                           [(ngModel)]="newSalary.account"
+                           [formControl]="accountControl"
+                           [matAutocomplete]="autoAccount">
+                    <mat-autocomplete #autoAccount="matAutocomplete" (optionSelected)="onAccountSelected($event.option.value)">
+                      @for (option of filteredAccountOptions | async; track option) {
+                        <mat-option [value]="option"
+                        >{{option}}</mat-option>
+                      }
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="col-lg-12 col-sm-12">
+                <div class="input-block mb-3">
+                  <label for="name">Fixed Salary</label>
+                  <input type="number" class="form-control" placeholder="Enter Fixed Salary" [(ngModel)]="newSalary.amount">
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-6 col-sm-12">
+                <div class="input-block">
+                  <mat-form-field class="w-100">
+                    <mat-label>MenuItems</mat-label>
+                    <input type="text"
+                           placeholder="Select Menu Items"
+                           aria-label="MenuItem"
+                           matInput
+                           [formControl]="menuItemControl"
+                           [matAutocomplete]="autoMenuItem">
+                    <mat-autocomplete #autoMenuItem="matAutocomplete">
+                      @for (option of filteredMenuItemsOptions | async; track option) {
+                        <mat-option [value]="option" (onSelectionChange)="addMenuItem(option)"
+                        >{{option}}</mat-option>
+                      }
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-6 col-sm-12">
+                <div class="input-block mb-3">
+                  <div class="table-responsive">
+                    <table class="table table-stripped table-hover datatable">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>#</th>
+                          <th>Name</th>
+                          <th>Category</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (menu of menuItemsSelected; track menu; let i = $index) {
+                          <tr>
+                            <td>{{ i+1 }}</td>
+                            <td>{{ menu.item_name }}</td>
+                            <td>{{ menu.category }}</td>
+                            <td class="d-flex align-items-center">
+                                <a
+                                  class="btn-action-icon"
+                                  (click)="removeMenuItem(menu)"
+                                  ><i class="feather icon-trash-2"></i
+                                ></a>
+                              </td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                </div>
+              </div>
+              <div class="col-lg-12 col-sm-12">
+                <div class="input-block mb-3">
+                  <label for="Symbol">Variable Salary <span *ngIf="menuItemsSelected.length !=0" class="text-danger">*</span></label>
+                  <input type="text" class="form-control" placeholder="Enter Variable Salary" [(ngModel)]="newSalary.variableAmount">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-back cancel-btn me-2">Cancel</a>
+            <button [disabled]="((!newSalary.vendor) || (menuItemsSelected.length !=0 && !newSalary.variableAmount))" href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-primary paid-continue-btn" (click)="addSalary()">Add Salary</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /Add Units Modal -->
+
+    <!-- Add Units Modal -->
+    <div class="modal custom-modal fade" id="edit_salary" role="dialog">
+      <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+          <div class="modal-header border-0 pb-0">
+            <div class="form-header modal-header-title text-start mb-0">
+              <h4 class="mb-0">Edit Salary</h4>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-lg-12 col-md-6 col-sm-12">
+                <div class="input-block">
+                  <mat-form-field class="w-100">
+                    <mat-label>Employee <span class="text-danger">*</span></mat-label>
+                    <input type="text"
+                           placeholder="Select Employee"
+                           aria-label="Employee Name"
+                           matInput
+                           [(ngModel)]="salaryToEdit.account"
+                           [formControl]="accountControl"
+                           [matAutocomplete]="autoAccount">
+                    <mat-autocomplete #autoAccount="matAutocomplete" (optionSelected)="onAccountSelected($event.option.value)">
+                      @for (option of filteredAccountOptions | async; track option) {
+                        <mat-option [value]="option"
+                        >{{option}}</mat-option>
+                      }
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="col-lg-12 col-sm-12">
+                <div class="input-block mb-3">
+                  <label for="name">Fixed Salary</label>
+                  <input type="number" class="form-control" placeholder="Enter Fixed Salary" [(ngModel)]="salaryToEdit.amount">
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-6 col-sm-12">
+                <div class="input-block">
+                  <mat-form-field class="w-100">
+                    <mat-label>MenuItems</mat-label>
+                    <input type="text"
+                           placeholder="Select Menu Items"
+                           aria-label="MenuItem"
+                           matInput
+                           [formControl]="menuItemControl"
+                           [matAutocomplete]="autoMenuItem">
+                    <mat-autocomplete #autoMenuItem="matAutocomplete">
+                      @for (option of filteredMenuItemsOptions | async; track option) {
+                        <mat-option [value]="option" (onSelectionChange)="addMenuItem(option)"
+                        >{{option}}</mat-option>
+                      }
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-6 col-sm-12">
+                <div class="input-block mb-3">
+                  <div class="table-responsive">
+                    <table class="table table-stripped table-hover datatable">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>#</th>
+                          <th>Name</th>
+                          <th>Category</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (menu of menuItemsSelected; track menu; let i = $index) {
+                          <tr>
+                            <td>{{ i+1 }}</td>
+                            <td>{{ menu.item_name }}</td>
+                            <td>{{ menu.category }}</td>
+                            <td class="d-flex align-items-center">
+                                <a
+                                  class="btn-action-icon"
+                                  (click)="removeMenuItem(menu)"
+                                  ><i class="feather icon-trash-2"></i
+                                ></a>
+                              </td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-12 col-sm-12">
+              <div class="input-block mb-3">
+                <label for="Symbol">Variable Salary <span *ngIf="menuItemsSelected.length !=0" class="text-danger">*</span></label>
+                <input type="text" class="form-control" placeholder="Enter Variable Salary" [(ngModel)]="salaryToEdit.variableAmount">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-back cancel-btn me-2">Cancel</a>
+            <button [disabled]="((!salaryToEdit.vendor) || (menuItemsSelected.length !=0 && !salaryToEdit.variableAmount))" href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-primary paid-continue-btn" (click)="updateSalary()">Update</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /Add Units Modal -->
+
+    <!-- Delete Items Modal -->
+    <div class="modal custom-modal fade" id="delete_modal" role="dialog">
+      <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="form-header">
+              <h3>Delete Salary</h3>
+              <p>Are you sure want to delete?</p>
+            </div>
+            <div class="modal-btn delete-action">
+              <div class="row">
+                <div class="col-6">
+                  <button type="reset" data-bs-dismiss="modal"
+                  class="w-100 btn btn-primary paid-continue-btn" (click)="deleteSalary()">Delete</button>
+                </div>
+                <div class="col-6">
+                  <button type="submit" data-bs-dismiss="modal"
+                  class="w-100 btn btn-primary paid-continue-btn">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /Delete Items Modal -->
+
+    <div class="modal custom-modal fade" id="calculate_salary" role="dialog" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header border-0 pb-0">
+            <div class="form-header modal-header-title text-start mb-0">
+              <h4 class="mb-0">Calculated Salaries</h4>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+            </button>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="">
+                    <table matSort class="table table-striped mb-0 table-hover datatable">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>#</th>
+                          <th>Account Name</th>
+                          <th>Last Payment Date</th>
+                          <th>Total Saraly Calulated</th>
+                          <!-- <th mat-sort-header="category">Total Expense</th> -->
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (data of allSalaries; track data; let i = $index) {
+                          <tr>
+                            <td>{{i+1}}</td>
+                            <td>{{data.vendor.name}}</td>
+                            <td>{{data.lastSalaryPaidDate}}</td>
+                            <td>PKR:{{data.totalSalaryCalculated}}</td>
+                            <!-- <td>PKR:{{data.totalExpense}}</td> -->
+                          </tr>
+                        }
+                        <tr>
+                          <td colspan="3">
+                              <p>Total Salaries since {{lastSalaryPaidDate}}</p>
+                          </td>
+                          <td><span class="text-primary fw-600">PKR:{{totalSalary}}</span></td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <!-- <app-custom-pagination></app-custom-pagination> -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-back cancel-btn me-2">Cancel</a>
+            <button [disabled]="(totalSalary === 0)" href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-primary paid-continue-btn" (click)="paySalary()">Pay Salary</button>
+          </div>
+        </div>
+      </div>
+    </div>

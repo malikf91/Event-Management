@@ -1,0 +1,282 @@
+<div class="page-header">
+  <div class="content-page-header">
+    <h5>Reservations</h5>
+    <div class="list-btn">
+      <ul class="filter-list">
+        <li class="top-nav-search mx-2 mb-3">
+          <div class="position-relative">
+            <input
+              name="search"
+              [formControl]="searchControl"
+              type="text"
+              class="form-control pe-5"
+              placeholder="Search reservations by name or phone"
+              aria-label="Search reservations"
+            />
+            <button
+              type="button"
+              class="btn position-absolute top-50 end-0 translate-middle-y me-2 p-0 border-0 bg-transparent"
+            >
+              <img src="assets/img/icons/search.svg" alt="img" />
+            </button>
+          </div>
+        </li>
+        <li>
+          <button class="btn btn-primary mb-3 primary-btn" (click)="addReservation()">
+            <i class="fa fa-plus"></i> Add Reservation
+        </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!-- /Page Header -->
+
+<div class="row custom-container">
+  <div class="col-sm-12">
+      <div class="card-table">
+          <div class="card-body">
+              <div class="table-responsive">
+                <div class="table-scroll">
+                  <div *ngIf="isLoading" class="p-3">Loading reservations...</div>
+                  <div *ngIf="!isLoading && errorMessage" class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+                  <div *ngIf="!isLoading && !errorMessage && reservations.length === 0" class="p-3 text-muted">No reservations found.</div>
+                  <table *ngIf="!isLoading && !errorMessage && reservations.length > 0" matSort
+                    (matSortChange)="sortData($event)"
+                    class="table table-center table-hover datatable"
+                    >
+                      <thead class="thead-light">
+                          <tr>
+                              <th>ID</th>
+                              <th mat-sort-header="reservation_name">Booking Name</th>
+                              <th>Contact Number</th>
+                              <th mat-sort-header="date">Booking Date</th>
+                              <th mat-sort-header="dashboardDate">Event Date</th>
+                              <!-- <th mat-sort-header="hall">Hall</th> -->
+                              <th mat-sort-header="total_price">Total Cost</th>
+                              <th mat-sort-header="payment_received">Paid</th>
+                              <th mat-sort-header="total_remaining">Due</th>
+                              <th mat-sort-header="status">Status</th>
+                              <th >Actions</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                        @for (reservation of reservations; track reservation; let i = $index) {
+                          <tr [ngClass]="{ 'drafted-row': reservation.status === 'DRAFTED' }">
+                            <td>{{ reservation.sNo }}</td>
+                              <td>{{ reservation.reservation_name }}</td>
+                              <td>{{ reservation.contact_number }}</td>
+                              <td>{{ reservation.date | date:'mediumDate' }}</td>
+                              <td>{{ reservation.dashboardDate | date:'mediumDate' }}</td>
+                              <!-- <td>{{ reservation.SLOT.hall }}</td> -->
+                              <td>{{ reservation.total_price | currency:'PKR':'symbol':'1.0-0' }}</td>
+                              <td>{{ reservation.payment_received | currency:'PKR':'symbol':'1.0-0' }}</td>
+                              <td>{{ reservation.total_remaining | currency:'PKR':'symbol':'1.0-0' }}</td>
+                              <td>
+                                <span class="badge"
+                                  [ngClass]="{
+                                    'bg-success': reservation.status === 'FULLFILLED',
+                                    'bg-danger': reservation.status === 'CANCELLED',
+                                    'bg-warning': reservation.status === 'OPEN',
+                                    'bg-secondary': reservation.status === 'DRAFTED'
+                                  }"
+                                >{{ reservation.status === 'FULLFILLED' ? 'DONE' : reservation.status }}</span>
+                              </td>
+                              <td class="d-flex align-items-center">
+                                <div class="dropdown dropdown-action">
+                                  <a
+                                  href="javascript:void(0);"
+                                  class="btn-action-icon"
+                                  data-bs-toggle="dropdown"
+                                  aria-expanded="false"
+                                  ><i class="fas fa-ellipsis-v"></i
+                                    ></a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                      <ul>
+                                        <li>
+                                          <a
+                                            class="dropdown-item"
+                                            [routerLink]="routes.reservationDetails"
+                                            [queryParams]="{ id: reservation.booking_id }"
+                                            title="View details for {{ reservation.reservation_name }}"
+                                            ><i class="far fa-eye me-2"></i>View</a
+                                            >
+                                          </li>
+                                        <li *ngIf="(reservation.status !== 'CANCELLED')">
+                                        <a
+                                          class="dropdown-item"
+                                          [routerLink]="routes.editReservation"
+                                          [queryParams]="{ id: reservation.booking_id }"
+                                          title="Edit reservation for {{ reservation.reservation_name }}"
+                                          ><i class="far fa-edit me-2"></i>Edit</a
+                                          >
+                                        </li>
+                                        <li *ngIf="(reservation.status !== 'CANCELLED')">
+                                          <a
+                                            class="dropdown-item"
+                                            href="javascript:void(0);"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#cancel_modal"
+                                            (click)="setReservationToCancel(reservation)"
+                                            title="Cancel reservation for {{ reservation.reservation_name }}"
+                                            ><i class="far fa-times-circle me-2"></i>Cancel</a
+                                            >
+                                          </li>
+                                        <li *ngIf="(reservation.status !== 'CANCELLED')">
+                                          <a
+                                            class="dropdown-item"
+                                            href="javascript:void(0);"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#delete_modal"
+                                            (click)="setReservationToDelete(reservation)"
+                                            title="Delete reservation for {{ reservation.reservation_name }}"
+                                            ><i class="far fa-trash-alt me-2"></i>Delete</a
+                                            >
+                                          </li>
+                                          <li *ngIf="(reservation.status !== 'FULLFILLED' && reservation.status !== 'CANCELLED' && reservation.total_remaining > 0)">
+                                            <a
+                                            class="dropdown-item"
+                                            href="javascript:void(0);"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#add_payment"
+                                            (click)="setReservationToAddPayment(reservation)"
+                                            title="Add payment for {{ reservation.reservation_name }} (Due: {{ reservation.total_remaining | currency:'PKR':'symbol':'1.0-0' }})"
+                                            ><i class="far fa-money-bill-alt me-2"></i>Add Payment</a
+                                            >
+                                          </li>
+                                        </ul>
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              }
+                      </tbody>
+                  </table>
+              </div>
+            </div>
+            <!-- <app-custom-pagination></app-custom-pagination> -->
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="modal custom-modal fade" id="delete_modal" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="form-header">
+          <h3>Delete Reservation</h3>
+          <p>Are you sure you want to delete <strong>{{ reservationToDelete.reservation_name }}</strong>?</p>
+        </div>
+        <div class="modal-btn delete-action">
+          <div class="row">
+            <div class="col-6">
+              <button data-bs-dismiss="modal" class="w-100 btn btn-primary paid-continue-btn" (click)="deleteReservation()">Delete</button>
+            </div>
+            <div class="col-6">
+              <button type="submit" data-bs-dismiss="modal" class="w-100 btn btn-primary paid-continue-btn">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal custom-modal fade" id="cancel_modal" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="form-header">
+          <h3>Cancel Reservation</h3>
+          <p>Please enter the amount to return for <strong>{{ reservationToCancel.reservation_name }}</strong></p>
+        </div>
+        <div class="input-block mb-3">
+          <label for="Country">Amount to Return</label>
+          <input type="number" class="form-control" placeholder="Enter Amount to Return" [(ngModel)]="reservationToCancel.amountToReturn">
+        </div>
+        <div class="modal-btn delete-action">
+          <div class="row">
+            <div class="col-6">
+              <button data-bs-dismiss="modal" class="w-100 btn btn-primary paid-continue-btn" (click)="cancelReservation()">Yes</button>
+            </div>
+            <div class="col-6">
+              <button type="submit" data-bs-dismiss="modal" class="w-100 btn btn-primary paid-continue-btn">Abort</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal custom-modal fade" id="add_payment" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <div class="form-header modal-header-title text-start mb-0">
+          <h4 class="mb-0">Add Payment - {{ reservationToAddPayment.reservation_name }}</h4>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card-body">
+              <div class="form-groups-item border-0 pb-0">
+                <div class="row">
+                  <div class="col-lg-8 col-md-6 col-sm-12">
+                    <div class="input-block mb-3">
+                      <label for="Country">Reservation Name</label>
+                      <input [disabled]="true" type="text" class="form-control" placeholder="Enter Menu Name" [(ngModel)]="reservationToAddPayment.reservation_name">
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="input-block mb-3">
+                      <label for="Menu">Status</label>
+                      <input [disabled]="true" type="text" class="form-control" placeholder="Enter Status" [(ngModel)]="reservationToAddPayment.status">
+                    </div>
+                  </div>                  
+                  <div class="col-lg-12 col-md-6 col-sm-12">
+                    <div class="input-block mb-3">
+                      <mat-form-field class="w-100">
+                        <mat-label>Select Account <span class="text-danger">*</span></mat-label>
+                        <input type="text"
+                               placeholder="Select Menu Items"
+                               aria-label="MenuItem"
+                               matInput
+                               [formControl]="control" 
+                               [matAutocomplete]="auto">
+                        <mat-autocomplete #auto="matAutocomplete">
+                          @for (option of filteredOptions | async; track option) {
+                            <mat-option [value]="option" (onSelectionChange)="selectAccount(option)"
+                            >{{option}}</mat-option>
+                          }
+                        </mat-autocomplete>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <div class="col-lg-12 col-md-6 col-sm-12">
+                    <div class="input-block mb-3">
+                      <label for="Country">Amount To Add <span class="text-danger">*</span> </label>
+                      <input type="number" class="form-control" placeholder="Enter Amount to Add" [(ngModel)]="reservationToAddPayment.paymentToAdd">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="javascript:void(0);" data-bs-dismiss="modal" class="btn btn-back cancel-btn me-2">Cancel</a>
+        <button href="javascript:void(0);" data-bs-dismiss="modal" 
+            [disabled]="!reservationToAddPayment.paymentToAdd || !reservationToAddPayment.account"
+            class="btn btn-primary paid-continue-btn"
+            (click)="addAmount()">Add Payment</button>
+      </div>
+    </div>
+  </div>
+</div>

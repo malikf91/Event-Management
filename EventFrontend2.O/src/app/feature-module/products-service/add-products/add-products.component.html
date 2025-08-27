@@ -1,0 +1,133 @@
+<div class="card mb-0">
+  <div class="card-body">
+    <div class="page-header">
+      <div class="content-page-header">
+        <h5>Add Products</h5>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group-item">
+          <h5 class="form-title">Basic Details</h5>
+          <div class="row">
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="input-block mb-3">
+                  <label for="Product">Product Name <span class="text-danger">  *</span></label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Enter Product Name"
+                    [(ngModel)]="newProduct.item"
+                    >
+                  </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                  <div class="input-block mb-3 add-products">
+                    <label for="Product ">Product Code</label>
+                    <input
+                      disabled="true"
+                      type="text"
+                      class="form-control"
+                      placeholder="Enter Product Code"
+                      [(ngModel)]="newProduct.code"
+                      >
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-6 col-sm-12">
+                    <div class="input-block mb-3">
+                      <label for="Category ">Category</label>
+                      <mat-select [(ngModel)]="newProduct.category" [ngModelOptions]="{standalone: true}" class="select custom-mat-select">
+                        <mat-option *ngFor="let category of categories" [value]="category.id">
+                          {{ category.category }}
+                        </mat-option>
+                      </mat-select>                      
+                      </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                      <div class="input-block mb-3">
+                        <label for="Purchase">Purchase Price  <span class="text-danger">  *</span></label>
+                        <input
+                        type="number"
+                        class="form-control"
+                        placeholder="Enter Purchase Prices"
+                        [(ngModel)]="newProduct.purchasePrice"
+                        >
+                      </div>
+                    </div>
+                          <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="input-block mb-3">
+                              <label for="Units">Units</label>
+                              <mat-select [(ngModel)]="newProduct.unit" [ngModelOptions]="{standalone: true}" class="select custom-mat-select">
+                                <!-- use for loop over units and give unit name as option and unit id as value -->
+                                <mat-option *ngFor="let unit of units" [value]="unit.unit_id">
+                                  {{unit.unit_name}}
+                                </mat-option>
+                              </mat-select>
+                            </div>
+                          </div>
+                            <div class="col-lg-4 col-md-6 col-sm-12">
+                              <div class="input-block mb-3">
+                                <label for="Alert">Alert Quantity </label>
+                                <input
+                                  type="number"
+                                  class="form-control"
+                                  placeholder="Enter Alert Quantity"
+                                  name="name"
+                                  [(ngModel)]="newProduct.alertQuantity"
+                                  >
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-group-item">
+                            <div class="row">
+                              <div class="col-xl-6 col-lg-6 col-md-6 col-12 description-box">
+                                <div class="input-block mb-3" id="summernote_container">
+                                  <label for="Descriptions" class="form-control-label">Product Descriptions</label>
+                                  <input type="text" class="form-control" [(ngModel)]="newProduct.description">
+                                </div>
+                              </div>
+                              <div class="col-xl-6 col-lg-6 col-md-6 col-12">
+                                <div class="input-block mb-3">
+                                  <label for="product-image">Product Image</label>
+                                  <ngx-dropzone (change)="onSelect($event)" class="service-upload">
+                                    <ngx-dropzone-label class="drop-browse align-center">
+                                      <span
+                                        ><img src="assets/img/icons/drop-icon.svg" alt="upload"
+                                      /></span>
+                                      <div class="d-flex">
+                                        Drop your files here or<span class="text-primary ms-1"
+                                        >browse</span
+                                        >
+                                      </div>
+
+                                      <span class="text-muted">Maximum size: 50MB</span>
+                                    </ngx-dropzone-label>
+                                    @for (f of files; track f) {
+                                      <ngx-dropzone-image-preview
+                                        ngProjectAs="ngx-dropzone-preview"
+                                        [file]="f"
+                                        [removable]="true"
+                                        (removed)="onRemove(f)"
+                                        >
+                                      </ngx-dropzone-image-preview>
+                                    }
+                                  </ngx-dropzone>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <form class="text-end">
+                            <button [routerLink]="routes.productlist" type="reset" class="btn btn-primary me-2">
+                              Cancel
+                            </button>
+                            <button [disabled]="(!newProduct.purchasePrice || !newProduct.item)" [routerLink]="routes.addproducts" type="submit" class="btn btn-primary" (click)="addProduct()">
+                              Add Item
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
