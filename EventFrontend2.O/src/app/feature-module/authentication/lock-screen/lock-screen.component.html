@@ -3,7 +3,7 @@
     <div class="container">
       <img
         class="img-fluid logo-dark mb-4"
-        src="assets/img/logo.png"
+        [src]="companySettings.logo ? companySettings.logo : 'assets/img/logo.png'"
         alt="Logo"
       />
       <div class="loginbox">

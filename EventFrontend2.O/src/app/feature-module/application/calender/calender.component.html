@@ -1,97 +1,111 @@
-<!-- Page Header -->
-<div class="page-header">
-  <div class="content-page-header">
-    <h5>Calendar</h5>
+<!-- Enhanced Calendar View -->
+<div class="calendar-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="content-page-header">
+      <h5><i class="fas fa-calendar-alt me-2"></i>Event Calendar</h5>
+    </div>
   </div>
-</div>
-<!-- /Page Header -->
-<div class="row">
-  <div class="col-lg-12 col-md-12 col-12">
-    <div class="card bg-white">
-      <div class="card-body">
-        @if (calendarVisible) {
+  
+  <!-- Calendar Actions -->
+  <div class="calendar-actions">
+    <button class="btn btn-primary" (click)="navigateToAddReservation()">
+      <i class="fas fa-plus me-2"></i>Add Reservation
+    </button>
+  </div>
+  
+  <!-- Calendar Card -->
+  <div class="card">
+    <div class="card-body">
+      @if (calendarVisible) {
+        <div #calendarElement>
           <full-calendar [options]='calendarOptions'>
             <ng-template #eventContent let-arg>
-              <b>{{ arg.timeText }}</b>
-              <i>{{ arg.event.title }}</i>
+              <div class="event-content">
+                <div class="event-title">{{ arg.event.title }}</div>
+              </div>
             </ng-template>
           </full-calendar>
-        }
-      </div>
+        </div>
+      }
     </div>
   </div>
 </div>
 
-<!-- Add Event Modal -->
-<div id="add_event" class="modal custom-modal fade" role="dialog">
-  <div class="modal-dialog modal-dialog-centered modal-md" role="document">
-    <div class="modal-content">
-      <div class="modal-header border-0 pb-0">
-        <div class="form-header modal-header-title text-start mb-0">
-          <h4 class="mb-0">Add Event</h4>
-        </div>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-          <span class="align-center" aria-hidden="true">×</span>
-        </button>
+<!-- Event Details Modal -->
+<div class="modal fade" [class.show]="showEventModal" [style.display]="showEventModal ? 'block' : 'none'" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content event-modal">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-calendar-event me-2"></i>
+          Event Details
+        </h5>
+        <button type="button" class="btn-close" (click)="closeEventModal()" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-        <form>
-          <div class="input-block mb-3">
-            <label for="Event">Event Name <span class="text-danger">*</span></label>
-            <input class="form-control" type="text">
-          </div>
-          <div class="input-block mb-3">
-            <label for="Event">Event Date <span class="text-danger">*</span></label>
-            <div class="cal-icon">
-              <input class="form-control datetimepicker" bsDatepicker [bsConfig]="{ adaptivePosition: true }" type="text">
+      <div class="modal-body" *ngIf="selectedEvent">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="event-info">
+              <h6 class="text-muted mb-2">Event Information</h6>
+              <div class="info-item">
+                <strong>Title:</strong> {{ selectedEvent.title }}
+              </div>
+              <div class="info-item">
+                <strong>Status:</strong> 
+                <span class="badge status-badge" [ngClass]="{
+                  'status-open': selectedEvent.status === 'OPEN',
+                  'status-drafted': selectedEvent.status === 'DRAFTED',
+                  'status-fulfilled': selectedEvent.status === 'FULLFILLED'
+                }">
+                  {{ selectedEvent.status }}
+                </span>
+              </div>
+              <div class="info-item">
+                <strong>Hall:</strong> {{ selectedEvent.hall || 'Not specified' }}
+              </div>
+              <div class="info-item">
+                <strong>Attendees:</strong> {{ selectedEvent.attendees || 0 }}
+              </div>
             </div>
           </div>
-          <div class="submit-section">
-            <button class="btn btn-primary submit-btn">Submit</button>
+          <div class="col-md-6">
+            <div class="event-schedule">
+              <h6 class="text-muted mb-2">Schedule</h6>
+              <div class="info-item">
+                <strong>Slot:</strong> {{ selectedEvent.slot }}
+              </div>
+              <div class="info-item">
+                <strong>Start:</strong> {{ selectedEvent.startTime }}
+              </div>
+              <div class="info-item">
+                <strong>End:</strong> {{ selectedEvent.endTime }}
+              </div>
+              <div class="info-item">
+                <strong>Duration:</strong> 
+                {{ getEventDuration(selectedEvent.startTime, selectedEvent.endTime) }}
+              </div>
+            </div>
           </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- /Add Event Modal -->
-
-<!-- Add Category Modal -->
-<div class="modal custom-modal fade" id="add_new_event">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header border-0 pb-0">
-        <div class="form-header modal-header-title text-start mb-0">
-          <h4 class="mb-0">Add Category</h4>
         </div>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-          <span class="align-center" aria-hidden="true">×</span>
-        </button>
-      </div>
-
-      <div class="modal-body">
-        <form>
-          <div class="input-block mb-3">
-            <label for="Category">Category Name</label>
-            <input class="form-control form-white" placeholder="Enter name" type="text">
-          </div>
-          <div class="input-block mb-0">
-            <label for="Choose">Choose Category Color</label>
-            <select class="form-control form-white select2" data-placeholder="Choose a color..." name="category-color">
-              <option value="success">Success</option>
-              <option value="danger">Danger</option>
-              <option value="info">Info</option>
-              <option value="primary">Primary</option>
-              <option value="warning">Warning</option>
-              <option value="inverse">Inverse</option>
-            </select>
-          </div>
-          <div class="submit-section">
-            <button type="button" class="btn btn-primary save-category submit-btn" data-dismiss="modal">Save</button>
-          </div>
-        </form>
+        
+        <div class="event-description mt-3" *ngIf="selectedEvent.description">
+          <h6 class="text-muted mb-2">Description</h6>
+          <p>{{ selectedEvent.description }}</p>
+        </div>
+        
+        <div class="event-actions mt-4">
+          <button class="btn btn-primary me-2" (click)="editEvent(selectedEvent)">
+            <i class="fas fa-edit me-2"></i>Edit Event
+          </button>
+          <button class="btn btn-secondary" (click)="closeEventModal()">
+            <i class="fas fa-times me-2"></i>Close
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </div>
-<!-- /Add Category Modal -->
+
+<!-- Modal Backdrop -->
+<div class="modal-backdrop fade show" *ngIf="showEventModal"></div>

@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { HallDisplayComponent } from './feature-module/hall-display/hall-display.component';
 import { SharedModule } from './shared/sharedIndex';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -11,7 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, HallDisplayComponent],
   imports: [BrowserModule, AppRoutingModule, SharedModule, BrowserAnimationsModule, FormsModule, ReactiveFormsModule, MatAutocompleteModule, MatInputModule, MatFormFieldModule],
   providers: [],
   bootstrap: [AppComponent],

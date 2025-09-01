@@ -104,47 +104,110 @@ export class PurchasesDetailsComponent implements OnInit {
   }
 
   printInvoice() {
-  const originalContent = document.querySelector('.card');
-  if (!originalContent) return;
+    const originalContent = document.querySelector('.card');
+    if (!originalContent) return;
 
-  const clone = originalContent.cloneNode(true) as HTMLElement;
+    const clone = originalContent.cloneNode(true) as HTMLElement;
 
-  const logoImg = clone.querySelector('img[alt="logo"]') as HTMLImageElement;
-  if (logoImg) {
-    const isBase64 = this.companySettings.logo?.startsWith('data:image/');
-    const imageSrc = isBase64
-      ? this.companySettings.logo
-      : `${window.location.origin}/assets/img/newLogo2.png`;
+    // Remove navigation buttons from the cloned content
+    const navigationContainer = clone.querySelector('.d-flex.justify-content-between.align-items-center.mb-3');
+    if (navigationContainer) {
+      navigationContainer.remove();
+    }
 
-    logoImg.setAttribute('src', imageSrc);
-    logoImg.removeAttribute('[src]');
+    // Also remove any elements with no-print class
+    const noPrintElements = clone.querySelectorAll('.no-print');
+    noPrintElements.forEach(element => element.remove());
+
+    // Remove any remaining buttons
+    const buttons = clone.querySelectorAll('button[routerLink], a[href*="javascript:void(0)"]');
+    buttons.forEach(button => button.remove());
+
+    const logoImg = clone.querySelector('img[alt="logo"]') as HTMLImageElement;
+    if (logoImg) {
+      const isBase64 = this.companySettings.logo?.startsWith('data:image/');
+      const imageSrc = isBase64
+        ? this.companySettings.logo
+        : `${window.location.origin}/assets/img/newLogo2.png`;
+
+      logoImg.setAttribute('src', imageSrc);
+      logoImg.removeAttribute('[src]');
+    }
+
+    const printWindow = window.open('', '_blank', 'width=1000,height=800');
+    if (!printWindow) return;
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Print Invoice</title>
+          <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+          <style>
+            body { padding: 20px; font-family: Arial, sans-serif; }
+            .invoice-logo img { max-width: 180px; }
+            .table th, .table td { padding: 8px; }
+            
+            /* Print preview header layout - logo left, company details center */
+            .content-invoice-header {
+              display: flex !important;
+              justify-content: space-between !important;
+              align-items: center !important;
+              margin-bottom: 30px !important;
+            }
+            
+            .invoice-item-one {
+              flex: 0 0 auto !important;
+            }
+            
+            .text-center {
+              flex: 1 !important;
+              text-align: center !important;
+              margin: 0 20px !important;
+            }
+            
+            /* Company name styling for print preview */
+            .text-center h5 {
+              font-weight: bold !important;
+              font-size: 1.8rem !important;
+              margin-bottom: 15px !important;
+              color: #333 !important;
+            }
+            
+            /* Address and contact spacing */
+            .text-center p {
+              margin-top: 10px !important;
+              line-height: 1.6 !important;
+              font-size: 1.1rem !important;
+            }
+            
+            /* Make "Address:" bold and italic */
+            .text-center p .text-muted {
+              font-weight: bold !important;
+              font-style: italic !important;
+              font-size: 1.1rem !important;
+            }
+            
+            /* Ensure no navigation elements are visible */
+            .d-flex.justify-content-between.align-items-center.mb-3,
+            .no-print,
+            button[routerLink],
+            a[href*="javascript:void(0)"] {
+              display: none !important;
+              visibility: hidden !important;
+            }
+          </style>
+        </head>
+        <body></body>
+      </html>
+    `);
+
+    printWindow.document.close();
+
+    printWindow.onload = () => {
+      printWindow.document.body.appendChild(clone);
+      printWindow.focus();
+      printWindow.print();
+      setTimeout(() => printWindow.close(), 500);
+    };
   }
-
-  const printWindow = window.open('', '_blank', 'width=1000,height=800');
-  if (!printWindow) return;
-
-  printWindow.document.write(`
-    <html>
-      <head>
-        <title>Print Invoice</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-        <style>
-          body { padding: 20px; font-family: Arial, sans-serif; }
-          .invoice-logo img { max-width: 150px; }
-          .table th, .table td { padding: 8px; }
-        </style>
-      </head>
-      <body></body>
-    </html>
-  `);
-
-  printWindow.document.close();
-
-  printWindow.onload = () => {
-    printWindow.document.body.appendChild(clone);
-    printWindow.focus();
-    printWindow.print();
-    setTimeout(() => printWindow.close(), 500);
-  };
-}
 }

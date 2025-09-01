@@ -16,6 +16,7 @@ export class LoginComponent {
   public show_password = true;
   showLoginError = false;
   loginError: any = ''
+  companySettings: any = {};
   form = new FormGroup({
     email: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required]),
@@ -26,7 +27,7 @@ export class LoginComponent {
   }
 
   constructor(private router: Router, private auth: AuthService, private data: DataService) {
-
+    this.loadCompanySettings();
   }
 
   loginFormSubmit() {
@@ -71,6 +72,19 @@ export class LoginComponent {
     }
   }
 
+
+  loadCompanySettings() {
+    this.data.getCompanySettings().subscribe((res: any) => {
+      if(res.data.length > 0) {
+        this.companySettings = res.data[0];
+        localStorage.setItem('companySettings', JSON.stringify(res.data[0]));
+      } else {
+        this.companySettings = {};
+        localStorage.setItem('companySettings', JSON.stringify({}));
+      }
+      console.log('Company Settings', this.companySettings);
+    });
+  }
 
   setCompanySettings() {
     this.data.getCompanySettings().subscribe((res: any) => {

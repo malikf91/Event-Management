@@ -12,5 +12,61 @@
   }
   
   .btn-back-custom:hover {
-    color: #5A5A89; /* optional hover effect */
+  color: #5A5A89; /* optional hover effect */
+}
+
+/* Print styles - hide navigation buttons during printing */
+@media print {
+  /* Hide the entire navigation container */
+  .d-flex.justify-content-between.align-items-center.mb-3.no-print {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
   }
+  
+  /* Hide specific button elements */
+  button[routerLink] {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  
+  a[href*="javascript:void(0)"] {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  
+  /* Hide any elements with no-print class */
+  .no-print {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  
+  /* Ensure clean print layout */
+  .card {
+    border: none !important;
+    box-shadow: none !important;
+  }
+  
+  .card-body {
+    padding: 0 !important;
+  }
+  
+  /* Force hide any remaining navigation elements */
+  .d-flex.justify-content-between.align-items-center.mb-3 {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}
+
+/* Additional print styles for better compatibility */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+}

@@ -24,7 +24,7 @@ export class DataService {
   // }
 
   public getEvents() {
-    return this.http.get<apiResultFormat>(this.backendUrl+'/bookings/all').pipe(
+    return this.http.get<apiResultFormat>(this.backendUrl+'/bookings/formatted').pipe(
       map((res: apiResultFormat) => {
         return res;
       })

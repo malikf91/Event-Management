@@ -47,6 +47,7 @@ export class SideMenuOneComponent implements OnDestroy {
   public primarySkinStyle = '0';
   public mobileSidebar = false;
   public multilevel: Array<boolean> = [false, false, false];
+  companySettings: any = JSON.parse(localStorage.getItem('companySettings') || '{}');
   
 
   base = 'dashboard';
