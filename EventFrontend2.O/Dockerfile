@@ -2,16 +2,11 @@ FROM node:18 AS builder
 
 WORKDIR /app
 
-# Set environment variables for better build performance
-ENV NODE_ENV=production
-ENV NPM_CONFIG_LOGLEVEL=warn
-ENV NPM_CONFIG_PREFER_OFFLINE=true
-
 COPY package*.json ./
-RUN npm ci --only=production --force
+RUN npm install --force
 
 COPY . .
-RUN npm run build:docker
+RUN npm run build:retry
 
 FROM nginx:alpine
 

@@ -5,7 +5,8 @@
     "ng": "ng",
     "start": "node --max-old-space-size=8192 ./node_modules/@angular/cli/bin/ng serve --configuration development",
     "build": "ng build",
-    "build:docker": "ng build --configuration=production --aot --build-optimizer",
+    "build:retry": "node build-with-retry.js",
+    "build:no-fonts": "ng build --configuration=production-no-fonts",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint"

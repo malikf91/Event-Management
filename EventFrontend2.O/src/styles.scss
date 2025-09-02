@@ -29,13 +29,7 @@ $template-theme: mat.define-light-theme((color: (primary: $template-primary,
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 @include mat.all-component-themes($template-theme);
-// @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
-// Using system fonts as fallback for Docker builds
-
-// Font family fallback for Inter font
-body, html {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-}
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
 
 // regular style toast
 @import "node_modules/ngx-toastr/toastr";

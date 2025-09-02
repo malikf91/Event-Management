@@ -73,8 +73,37 @@
               "extractLicenses": true,
               "sourceMap": false,
               "namedChunks": false,
+              "aot": true,
+              "extractCss": true,
               "vendorChunk": false,
-              "commonChunk": true
+              "commonChunk": true,
+              "subresourceIntegrity": false
+            },
+            "production-no-fonts": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "5mb"
+                }
+              ],
+              "outputHashing": "all",
+              "optimization": true,
+              "buildOptimizer": true,
+              "extractLicenses": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractCss": true,
+              "vendorChunk": false,
+              "commonChunk": true,
+              "subresourceIntegrity": false,
+              "allowedCommonJsDependencies": ["@fortawesome/fontawesome-free"]
             },
             "development": {
               "buildOptimizer": false,
