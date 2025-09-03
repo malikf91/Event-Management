@@ -13,15 +13,16 @@
       <!-- Print-specific styles -->
       <style>
         @media print {
+          /* Prevent extra pages at start and end */
+          html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: auto !important;
+          }
+          
           .no-print {
             display: none !important;
             visibility: hidden !important;
-            opacity: 0 !important;
-            height: 0 !important;
-            width: 0 !important;
-            overflow: hidden !important;
-            position: absolute !important;
-            left: -9999px !important;
           }
           
           .d-flex.justify-content-between.align-items-center.mb-3 {
@@ -37,6 +38,28 @@
           a[href*="javascript:void(0)"] {
             display: none !important;
             visibility: hidden !important;
+          }
+          
+          /* Only hide navigation elements, keep content layout intact */
+          .card {
+            box-shadow: none !important;
+            border: 1px solid #ddd !important;
+            margin: 0 !important;
+            page-break-inside: auto !important;
+          }
+          
+          /* Ensure content flows naturally */
+          .card-body {
+            padding: 15px !important;
+          }
+          
+          /* Prevent unnecessary page breaks */
+          .page-header {
+            page-break-after: avoid !important;
+          }
+          
+          .alert {
+            page-break-inside: avoid !important;
           }
         }
       </style>
@@ -131,10 +154,10 @@
                               <tr>
                                 <td>Hall</td>
                                 <td>
-                                  {{ reservationToView.SLOT[0]?.hall }}
-                                  <span *ngIf="reservationToView.SLOT[1]?.hall">, {{ reservationToView.SLOT[1].hall }}</span>
+                                  {{ reservationToView.SLOT && reservationToView.SLOT[0]?.hall || '-' }}
+                                  <span *ngIf="reservationToView.SLOT && reservationToView.SLOT[1]?.hall">, {{ reservationToView.SLOT[1].hall }}</span>
                                 </td>
-                                <td>{{reservationToView.SLOT?.slot === 'Evening' ? 'Night' : 'Day'}}</td>
+                                <td>{{reservationToView.SLOT && reservationToView.SLOT[0]?.slot === 'Evening' ? 'Night' : 'Day'}}</td>
                                 <td>1</td>
                                 <td></td>
                                 <td></td>

@@ -41,8 +41,21 @@ export class PurchasesDetailsComponent implements OnInit {
         });
 
         this.data.getMenuItems().subscribe((res: any) => {
+          // Parse menu_items_ids if it's a string, otherwise use as array
+          let menuItemIds: number[] = [];
+          if (typeof this.reservationToView.menu_items_ids === 'string') {
+            try {
+              menuItemIds = JSON.parse(this.reservationToView.menu_items_ids);
+            } catch (e) {
+              console.error('Error parsing menu_items_ids:', e);
+              menuItemIds = [];
+            }
+          } else if (Array.isArray(this.reservationToView.menu_items_ids)) {
+            menuItemIds = this.reservationToView.menu_items_ids;
+          }
+
           this.menuItems = res.filter((item: any) => {
-            return this.reservationToView.menu_items_ids.includes(item.menu_item_id);
+            return menuItemIds.includes(item.menu_item_id);
           });
         });
       });
@@ -123,6 +136,7 @@ export class PurchasesDetailsComponent implements OnInit {
     const buttons = clone.querySelectorAll('button[routerLink], a[href*="javascript:void(0)"]');
     buttons.forEach(button => button.remove());
 
+    // Fix logo loading issue by ensuring the image is properly set
     const logoImg = clone.querySelector('img[alt="logo"]') as HTMLImageElement;
     if (logoImg) {
       const isBase64 = this.companySettings.logo?.startsWith('data:image/');
@@ -130,10 +144,28 @@ export class PurchasesDetailsComponent implements OnInit {
         ? this.companySettings.logo
         : `${window.location.origin}/assets/img/newLogo2.png`;
 
-      logoImg.setAttribute('src', imageSrc);
-      logoImg.removeAttribute('[src]');
+      // Create a new image element to ensure proper loading
+      const newImg = new Image();
+      newImg.onload = () => {
+        logoImg.src = imageSrc;
+        logoImg.removeAttribute('[src]');
+        // Trigger print after image is loaded
+        this.triggerPrint(clone);
+      };
+      newImg.onerror = () => {
+        // Fallback to default logo if custom logo fails to load
+        logoImg.src = `${window.location.origin}/assets/img/newLogo2.png`;
+        logoImg.removeAttribute('[src]');
+        this.triggerPrint(clone);
+      };
+      newImg.src = imageSrc;
+    } else {
+      // If no logo found, proceed with print
+      this.triggerPrint(clone);
     }
+  }
 
+  private triggerPrint(clone: HTMLElement) {
     const printWindow = window.open('', '_blank', 'width=1000,height=800');
     if (!printWindow) return;
 
@@ -143,9 +175,20 @@ export class PurchasesDetailsComponent implements OnInit {
           <title>Print Invoice</title>
           <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
           <style>
-            body { padding: 20px; font-family: Arial, sans-serif; }
-            .invoice-logo img { max-width: 180px; }
-            .table th, .table td { padding: 8px; }
+            body { 
+              padding: 20px; 
+              font-family: Arial, sans-serif; 
+              margin: 0;
+            }
+            
+            .invoice-logo img { 
+              max-width: 180px; 
+              height: auto;
+            }
+            
+            .table th, .table td { 
+              padding: 8px; 
+            }
             
             /* Print preview header layout - logo left, company details center */
             .content-invoice-header {
@@ -194,6 +237,12 @@ export class PurchasesDetailsComponent implements OnInit {
             a[href*="javascript:void(0)"] {
               display: none !important;
               visibility: hidden !important;
+            }
+            
+            /* Keep card styling minimal */
+            .card {
+              box-shadow: none !important;
+              border: 1px solid #ddd !important;
             }
           </style>
         </head>
