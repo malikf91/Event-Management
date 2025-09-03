@@ -59,6 +59,7 @@ export class AddEstimatesComponent implements OnInit, AfterViewInit {
   menuSearch: FormControl = new FormControl('');
   filteredMenus: any[] = [];
   personsControl: FormControl = new FormControl('', [Validators.required, Validators.pattern(/^[1-9][0-9]*$/)]);
+  menuPriceControl: FormControl = new FormControl('', [Validators.required, Validators.min(0)]);
 
 
   constructor(private data: DataService, private http: HttpClient, private router: Router, private fb: FormBuilder, private cdr: ChangeDetectorRef, private toastr: ToasterService) { }
@@ -110,6 +111,11 @@ export class AddEstimatesComponent implements OnInit, AfterViewInit {
     this.personsControl.valueChanges.subscribe(() => {
       this.updateTotalOnPersonsChange();
       this.updateSummaryTotals(); // Also update summary totals
+    });
+
+    // Subscribe to menu price control changes to update totals
+    this.menuPriceControl.valueChanges.subscribe(() => {
+      this.updateTotalOnMenuPriceChange();
     });
   }
 
@@ -474,6 +480,16 @@ export class AddEstimatesComponent implements OnInit, AfterViewInit {
     this.validateDiscount(); // Revalidate discount when menu total changes
   }
 
+  updateTotalOnMenuPriceChange() {
+    if (this.reservation.selectedMenu && this.menuPriceControl.value) {
+      const newPrice = Number(this.menuPriceControl.value);
+      this.reservation.selectedMenu.price = newPrice;
+      const persons = Number(this.personsControl?.value || 0);
+      this.reservation.selectedMenu.finalPrice = newPrice * persons;
+      this.validateDiscount(); // Revalidate discount when menu total changes
+    }
+  }
+
   updateSummaryTotals() {
     // Ensure the menu total is correctly calculated
     if (this.reservation.selectedMenu && this.personsControl?.value) {
@@ -602,6 +618,8 @@ export class AddEstimatesComponent implements OnInit, AfterViewInit {
     this.reservation.selectedMenu = { ...menu };
     // Ensure price present and compute total based on persons
     this.reservation.selectedMenu.price = menu.menu_price;
+    // Initialize menu price control with the default menu price
+    this.menuPriceControl.setValue(menu.menu_price);
     const persons = Number(this.personsControl?.value || 0);
     this.reservation.selectedMenu.finalPrice = (this.reservation.selectedMenu.price || 0) * persons;
     // Trigger menu item load based on selected menu

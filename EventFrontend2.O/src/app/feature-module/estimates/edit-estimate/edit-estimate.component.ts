@@ -23,6 +23,7 @@ export class EditEstimateComponent implements OnInit {
   
   // New properties for enhanced functionality
   personsControl = new FormControl(1, [Validators.required, Validators.pattern(/^[1-9]\d*$/)]);
+  menuPriceControl = new FormControl('', [Validators.required, Validators.min(0)]);
   discountError: string = '';
   isInitialized: boolean = false;
   
@@ -105,6 +106,11 @@ export class EditEstimateComponent implements OnInit {
           this.personsControl.setValue(this.reservationToEdit.number_of_persons);
         }
 
+        // Initialize menu price control
+        if (this.reservationToEdit.selectedMenu) {
+          this.menuPriceControl.setValue(this.reservationToEdit.selectedMenu.price || this.reservationToEdit.selectedMenu.menu_price || 0);
+        }
+
         // Initialize primary and secondary lock (only allow toggling secondary)
         if (Array.isArray(this.slotSelected) && this.slotSelected.length >= 1) {
           const s0 = this.slotSelected[0];
@@ -126,6 +132,11 @@ export class EditEstimateComponent implements OnInit {
     // Subscribe to persons control changes
     this.personsControl.valueChanges.subscribe(() => {
       this.updateTotalOnPersonsChange();
+    });
+
+    // Subscribe to menu price control changes
+    this.menuPriceControl.valueChanges.subscribe(() => {
+      this.updateTotalOnMenuPriceChange();
     });
 
     // Subscribe to menu search changes
@@ -494,6 +505,17 @@ export class EditEstimateComponent implements OnInit {
     this.validateDiscount();
   }
 
+  updateTotalOnMenuPriceChange(): void {
+    if (this.reservationToEdit.selectedMenu && this.menuPriceControl.value) {
+      const newPrice = Number(this.menuPriceControl.value);
+      this.reservationToEdit.selectedMenu.price = newPrice;
+      this.reservationToEdit.selectedMenu.menu_price = newPrice;
+      const persons = Number(this.personsControl?.value || 0);
+      this.reservationToEdit.selectedMenu.finalPrice = newPrice * persons;
+      this.validateDiscount();
+    }
+  }
+
   updateSummaryTotals(): void {
     if (this.reservationToEdit.selectedMenu) {
       this.reservationToEdit.selectedMenu.finalPrice = (this.reservationToEdit.selectedMenu.menu_price || 0) * (this.personsControl.value || 1);
@@ -659,6 +681,8 @@ export class EditEstimateComponent implements OnInit {
     // initialize price fields if missing
     this.reservationToEdit.selectedMenu.price = this.reservationToEdit.selectedMenu.price ?? this.reservationToEdit.selectedMenu.menu_price ?? 0;
     this.reservationToEdit.selectedMenu.menu_price = this.reservationToEdit.selectedMenu.menu_price ?? this.reservationToEdit.selectedMenu.price ?? 0;
+    // Initialize menu price control with the current price
+    this.menuPriceControl.setValue(this.reservationToEdit.selectedMenu.price || this.reservationToEdit.selectedMenu.menu_price || 0);
     // load menu items for the selected menu to display in Stage 4
     this.loadMenuItemsForMenu(menu);
     this.updateSummaryTotals();
