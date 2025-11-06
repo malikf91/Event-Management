@@ -61,14 +61,14 @@ export class PurchaseReportComponent implements OnInit {
         this.cashAccount = res;
       }
     });
-    this.data.getVendorByName('Bank Al-Falah').subscribe((res: any) => {
+    this.data.getVendorByName('HAJI SHAB PERSONAL ACCOUNT').subscribe((res: any) => {
       if (res) {
         this.bankAccount = res;
       }
     });
     forkJoin({
       cashVendor: this.data.getVendorByName('CASH IN HAND'),
-      bankVendor: this.data.getVendorByName('Bank Al-Falah')
+      bankVendor: this.data.getVendorByName('HAJI SHAB PERSONAL ACCOUNT')
     }).subscribe(({ cashVendor, bankVendor }) => {
 
       forkJoin({
@@ -87,9 +87,9 @@ export class PurchaseReportComponent implements OnInit {
 
         // Process bank transactions
         (bankTx as any).data.forEach((element: any) => {
-          if (element.creditAccount?.name === 'Bank Al-Falah') {
+          if (element.creditAccount?.name === 'HAJI SHAB PERSONAL ACCOUNT') {
             this.bankInflow.push(element);
-          } else if (element.debitAccount?.name === 'Bank Al-Falah') {
+          } else if (element.debitAccount?.name === 'HAJI SHAB PERSONAL ACCOUNT') {
             this.bankOutflow.push(element);
           }
         });

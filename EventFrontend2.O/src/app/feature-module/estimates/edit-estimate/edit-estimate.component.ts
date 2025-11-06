@@ -82,6 +82,7 @@ export class EditEstimateComponent implements OnInit {
       let id = params['id'];
       this.data.getReservationById(id).subscribe((res: any) => {
         this.reservationToEdit = res;
+        this.reservationToEdit.discount = this.reservationToEdit.discount || 0;
         this.loadAdditionalServices();
         this.loadMenuItems(this.reservationToEdit.menu_items_ids);
         this.slotSelected = this.reservationToEdit.SLOT;
@@ -185,89 +186,15 @@ export class EditEstimateComponent implements OnInit {
   markSlotSelected(slotType: any, day: any, date: any, monthNumber:any, slot: any) {
     const year = day.split(" ")[1];
     let formattedDate = date + '_' + monthNumber + '_' + year;
-
-    // Do not allow toggling the primary slot
-    if (this.primarySlot && this.primarySlot.hall === slotType && this.primarySlot.date === formattedDate && this.primarySlot.slot === slot) {
-      return;
-    }
-
-    // Allow toggling only the locked secondary slot
-    if (this.secondaryLock && !(this.secondaryLock.hall === slotType && this.secondaryLock.date === formattedDate && this.secondaryLock.slot === slot)) {
-      return;
-    }
-
-    // Check if slot is already selected (toggle functionality)
-    const existingIndex = this.slotSelected.findIndex((s: any) => 
-      s && s.hall === slotType && s.date === formattedDate && s.slot === slot
-    );
-
-    if (existingIndex !== -1) {
-      // Unselect the slot (only secondary is toggleable)
-      this.slotSelected.splice(existingIndex, 1);
-      this.nextSlotIndex = Math.max(0, this.nextSlotIndex - 1);
-      // keep secondary lock intact so only that slot remains enabled
-      return;
+    // this.slotSelected = { hall: slotType, date: formattedDate, slot: slot };
+    if(this.nextSlotIndex === 0) {
+      this.slotSelected[0] = { hall: slotType, date: formattedDate, slot: slot };
+      this.nextSlotIndex++;
     } else {
-      // Select new slot (secondary)
-      if (this.primarySlot) {
-        this.slotSelected[1] = { hall: slotType, date: formattedDate, slot: slot };
-        this.nextSlotIndex = 0;
-        return;
-      }
-      // Fallback for cases without a primary (should not happen in edit)
-      if(this.nextSlotIndex === 0) {
-        this.slotSelected[0] = { hall: slotType, date: formattedDate, slot: slot };
-        this.nextSlotIndex++;
-      } else if (this.nextSlotIndex === 1) {
-        this.slotSelected[1] = { hall: slotType, date: formattedDate, slot: slot };
-        this.nextSlotIndex = 0;
-      }
+      this.slotSelected[1] = { hall: slotType, date: formattedDate, slot: slot };
+      this.nextSlotIndex = 0;
     }
   }
-
-  canSelectSlot(slotType: any, day: any, date: any, monthNumber: any, slot: any): boolean {
-    const year = day.split(" ")[1];
-    let formattedDate = date + '_' + monthNumber + '_' + year;
-
-    // If there's a primary slot, only allow selecting/unselecting the locked secondary slot
-    if (this.primarySlot) {
-      // if secondary already selected (slotSelected length >= 2), allow only clicking that same button
-      if (this.slotSelected.length >= 2) {
-        const s1 = this.slotSelected[1];
-        return s1 && s1.hall === slotType && s1.date === formattedDate && s1.slot === slot;
-      }
-      // otherwise, allow only the precomputed secondaryLock
-      return !!(this.secondaryLock && this.secondaryLock.hall === slotType && this.secondaryLock.date === formattedDate && this.secondaryLock.slot === slot);
-    }
-
-    // No primary (fallback): original rules
-    if (this.slotSelected.length === 0) {
-      return true;
-    }
-    if (this.slotSelected.length === 1) {
-      const firstSlot = this.slotSelected[0];
-      if (!firstSlot) return false;
-      if (firstSlot.date !== formattedDate) return false;
-      if (firstSlot.slot !== slot) return false;
-      return true;
-    }
-    return false;
-  }
-
-  getFirstSelectedSlotDate(): string | null {
-    if (this.slotSelected.length > 0 && this.slotSelected[0]) {
-      return this.slotSelected[0].date;
-    }
-    return null;
-  }
-
-  getFirstSelectedSlotType(): string | null {
-    if (this.slotSelected.length > 0 && this.slotSelected[0]) {
-      return this.slotSelected[0].slot;
-    }
-    return null;
-  }
-
   getSelectedSlots(): any[] {
     return this.slotSelected.filter(slot => slot !== null);
   }

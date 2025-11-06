@@ -13,11 +13,13 @@ export class PurchasesDetailsComponent implements OnInit {
   ledgerToView: any = [];
   menuItems: any = [];
   companySettings: any = {};
+  user: any = {};
 
   constructor(private route: ActivatedRoute, private data: DataService) { }
 
   ngOnInit(): void {
-    try { window.scrollTo({ top: 0, behavior: 'auto' }); } catch {}
+    this.user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}') : null;
+    try { window.scrollTo({ top: 0, behavior: 'auto' }); } catch { }
 
     const options: Intl.DateTimeFormatOptions = {
       timeZone: 'Asia/Karachi',
@@ -80,31 +82,31 @@ export class PurchasesDetailsComponent implements OnInit {
     this.data.getLedgerByID(this.editedLedger.ledgerId).subscribe((res: any) => {
       this.ledgerToEdit = res;
       this.ledgerToEdit.amountCredit = this.editedLedger.amount;
-      
+
       this.data.updateLedgerById(this.ledgerToEdit).subscribe((res) => {
         this.updateReservationLedger(res);
       });
     });
   }
 
-  updateReservationLedger(res: any) {  
-      this.data.updateReservationLedgerById(this.editedLedger).subscribe((res) => {
+  updateReservationLedger(res: any) {
+    this.data.updateReservationLedgerById(this.editedLedger).subscribe((res) => {
+      let requestBody = {
+        id: this.editedLedger.booking_id,
+        paymentToAdd: this.editedLedger.amount - this.originalAmount,
+      }
+
+      this.data.addReservationPayment(requestBody).subscribe((res: any) => {
         let requestBody = {
-          id: this.editedLedger.booking_id,
-          paymentToAdd: this.editedLedger.amount - this.originalAmount,
+          id: this.editedLedger.trans_id,
+          amount: this.editedLedger.amount,
         }
-    
-        this.data.addReservationPayment(requestBody).subscribe((res: any) => {
-          let requestBody = {
-            id: this.editedLedger.trans_id,
-            amount: this.editedLedger.amount,
-          }
-          this.data.updateTransactionAmount(requestBody).subscribe((res) => {
-            window.location.reload();
-          });
-          });
+        this.data.updateTransactionAmount(requestBody).subscribe((res) => {
+          window.location.reload();
         });
-    }
+      });
+    });
+  }
 
   originalAmount: number = 0;
 
@@ -114,6 +116,16 @@ export class PurchasesDetailsComponent implements OnInit {
       this.editedLedger.amount = this.editedAmount;
       this.updateLedger();
     }
+  }
+
+  // Chunk menu items into groups of 6
+  getMenuItemsChunked(): any[][] {
+    const chunkSize = 6;
+    const chunks: any[][] = [];
+    for (let i = 0; i < this.menuItems.length; i += chunkSize) {
+      chunks.push(this.menuItems.slice(i, i + chunkSize));
+    }
+    return chunks;
   }
 
   printInvoice() {

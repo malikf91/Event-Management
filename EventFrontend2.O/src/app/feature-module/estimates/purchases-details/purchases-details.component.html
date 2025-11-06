@@ -96,7 +96,7 @@
             <span class="text-muted">Event Date:</span> {{reservationToView.dashboardDate}}
           </div>
           <div class="vr mx-1"></div>
-          <div><span class="text-muted">Total:</span> PKR {{reservationToView.total_price}}</div>
+          <div><span class="text-muted">Total:</span> PKR {{reservationToView.total_price | number:'1.0-0' }}</div>
         </div>
       </div>
 
@@ -167,24 +167,29 @@
                                 <td></td>
                                 <td></td>
                                 <td>{{reservationToView.number_of_persons}}</td>
-                                <td>PKR{{reservationToView.selectedMenu?.price}}</td>
-                                <td>PKR{{reservationToView.total_menu_price}}</td>
+                                <td>PKR{{reservationToView.selectedMenu?.price | number:'1.0-0' }}</td>
+                                <td>PKR{{reservationToView.total_menu_price | number:'1.0-0' }}</td>
                               </tr>
-                              <tr *ngFor="let item of menuItems">
-                                <td>{{item.item_name}}</td>
+                              <tr>
+                                <td>MENU ITEMS</td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
+                              </tr>
+                              <tr *ngFor="let chunk of getMenuItemsChunked()">
+                                <td *ngFor="let item of chunk">{{item.item_name}}</td>
+                                <!-- Fill remaining columns if less than 6 items in this row -->
+                                <td *ngFor="let i of [].constructor(6 - chunk.length)"></td>
                               </tr>
                               <tr *ngFor="let service of reservationToView.additional_services">
                                 <td>{{service.additional_service_name}}</td>
                                 <td></td>
                                 <td></td>
                                 <td>{{service.quantity}}</td>
-                                <td>PKR{{service.price}}</td>
-                                <td>PKR{{service.totalPrice}}</td>
+                                <td>PKR{{service.price | number:'1.0-0' }}</td>
+                                <td>PKR{{service.totalPrice | number:'1.0-0' }}</td>
                               </tr>
                               <tr>
                                 <td colspan="6" style="height: 10px; border: none;"></td>
@@ -192,27 +197,27 @@
                               <tr style="border-top: 2px solid #e9ecef;">
                                 <td colspan="4"></td>
                                 <td>SubTotal:</td>
-                                <td>{{reservationToView.grandTotal}}</td>
+                                <td>{{reservationToView.grandTotal | number:'1.0-0' }}</td>
                               </tr>
                               <tr>
                                 <td colspan="4"></td>
                                 <td>Discount:</td>
-                                <td>-{{reservationToView.discount}}</td>
+                                <td>-{{reservationToView.discount | number:'1.0-0' }}</td>
                               </tr>
                               <tr>
                                 <td colspan="4"></td>
                                 <td><strong>Total:</strong></td>
-                                <td>{{reservationToView.total_price}}</td>
+                                <td>{{reservationToView.total_price | number:'1.0-0' }}</td>
                               </tr>
                               <tr>
                                 <td colspan="4"></td>
                                 <td><strong>Deposit Balance:</strong></td>
-                                <td>{{reservationToView.payment_received}}</td>
+                                <td>{{reservationToView.payment_received | number:'1.0-0' }}</td>
                               </tr>
                               <tr>
                                 <td colspan="4"></td>
                                 <td><strong>Balance Due:</strong></td>
-                                <td>{{reservationToView.total_remaining}}</td>
+                                <td>{{reservationToView.total_remaining | number:'1.0-0' }}</td>
                               </tr>
                             </tbody>
                           </table>
@@ -235,7 +240,7 @@
                                 <th>Payment Receiver</th>
                                 <th>Amount</th>
                                 <th>Account</th>
-                                <th></th>
+                                <th *ngIf="user.firstName !== 'SuperAdmin'"></th>
                               </tr>
                             </thead>
                             <tbody>
@@ -244,14 +249,14 @@
                                 <td>{{ledger.user}}</td>
                                 <td>
                                   <ng-container *ngIf="editedLedger !== ledger; else editAmount">
-                                    {{ ledger.amount }}
+                                    {{ ledger.amount | number:'1.0-0' }}
                                   </ng-container>
                                   <ng-template #editAmount>
                                     <input type="number" class="form-control w-25" [(ngModel)]="editedAmount" />
                                   </ng-template>
                                 </td>
                                 <td>{{ledger.account}}</td>
-                                <td class="d-flex align-items-center no-print">
+                                <td *ngIf="user.firstName !== 'SuperAdmin'" class="d-flex align-items-center no-print">
                                   <ng-container *ngIf="editedLedger !== ledger && reservationToView.status !== 'CANCELLED'">
                                     <a class="btn-action-icon me-2" href="javascript:void(0);" (click)="setLedgerToEdit(ledger)">
                                       <i class="feather icon-edit"></i>

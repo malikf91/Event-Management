@@ -65,7 +65,7 @@
               <div class="row">
                 <div class="mb-3 col-md-6">
                   <label for="reservationName" class="form-label">Reservation Name <span class="text-danger">*</span></label>
-                  <input type="text" id="reservationName" class="form-control input-block" [disabled]="true"
+                  <input type="text" id="reservationName" class="form-control input-block"
                     [(ngModel)]="reservationToEdit.reservation_name" name="reservation_name">
                 </div>
                 <div class="mb-3 col-md-6">
@@ -167,10 +167,10 @@
             name="date"
             class="datetimepicker form-control"
             placeholder="Select Date"
-            [ngModel]="reservationToEdit.date"
+            [(ngModel)]="reservationToEdit.date"
             (ngModelChange)="updateCalendar()"
             bsDatepicker [bsConfig]="{ adaptivePosition: true }"
-            [bsValue]="reservationToEdit.date"
+            [(bsValue)]="reservationToEdit.date"
             />
       </div>
     </div>
@@ -196,14 +196,14 @@
                   [ngClass]="{'btnSelected': isSlotSelected(slotType, day, Date[j], monthNumber[j], 'Morning'),
                     'slotDrafted': !isSlotSelected(slotType, day, Date[j], monthNumber[j], 'Morning') && isSlotDrafted(slotType, day, Date[j], monthNumber[j], 'Morning'),
                     'slotBooked': !isSlotSelected(slotType, day, Date[j], monthNumber[j], 'Morning') && isSlotBooked(slotType, day, Date[j], monthNumber[j], 'Morning')}"
-                  [disabled]= "isSlotBooked(slotType, day, Date[j], monthNumber[j], 'Morning') || !canSelectSlot(slotType, day, Date[j], monthNumber[j], 'Morning')"
+                  [disabled]= "isSlotBooked(slotType, day, Date[j], monthNumber[j], 'Morning')"
                   (click)="markSlotSelected(slotType, day, Date[j], monthNumber[j], 'Morning')"
                   >Day</button>
                   <button class="btn specialBtnEVN" 
                   [ngClass]="{'btnSelected': isSlotSelected(slotType, day, Date[j], monthNumber[j], 'Evening'),
                     'slotDrafted': !isSlotSelected(slotType, day, Date[j], monthNumber[j], 'Evening') && isSlotDrafted(slotType, day, Date[j], monthNumber[j], 'Evening'),
                     'slotBooked': !isSlotSelected(slotType, day, Date[j], monthNumber[j], 'Evening') && isSlotBooked(slotType, day, Date[j], monthNumber[j], 'Evening')}"
-                  [disabled]= "isSlotBooked(slotType, day, Date[j], monthNumber[j], 'Evening') || !canSelectSlot(slotType, day, Date[j], monthNumber[j], 'Evening')"
+                  [disabled]= "isSlotBooked(slotType, day, Date[j], monthNumber[j], 'Evening')"
                   (click)="markSlotSelected(slotType, day, Date[j], monthNumber[j], 'Evening')"
                   >Night</button>
                 </div>
@@ -313,7 +313,7 @@
 
             <div class="border-top pt-3">
               <div class="d-flex justify-content-between"><span>Menu</span><span>{{ reservationToEdit?.selectedMenu?.menu_name || '-' }}</span></div>
-              <div class="d-flex justify-content-between"><span>Persons</span><span>{{ personsControl?.value || 0 }}</span></div>
+              <div class="d-flex justify-content-between"><span>Persons</span><span>{{ personsControl.value || 0 }}</span></div>
               <div class="d-flex justify-content-between fw-semibold"><span>Total</span><span>PKR {{ getCurrentTotal() }}</span></div>
             </div>
           </div>
@@ -530,7 +530,7 @@
             <div class="mb-3 border-top pt-3">
               <h6 class="text-muted small mb-2">MENU DETAILS</h6>
               <div class="d-flex justify-content-between"><span class="small">Menu</span><span class="small">{{ reservationToEdit?.selectedMenu?.menu_name || '-' }}</span></div>
-              <div class="d-flex justify-content-between"><span class="small">Persons</span><span class="small">{{ personsControl?.value || 0 }}</span></div>
+              <div class="d-flex justify-content-between"><span class="small">Persons</span><span class="small">{{ personsControl.value || 0 }}</span></div>
               <div class="d-flex justify-content-between align-items-center">
                 <span class="small">Menu Price</span>
                 <div class="d-flex align-items-center">

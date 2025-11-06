@@ -60,7 +60,7 @@
           <h5>Add Reservation Details</h5>
           <ul class="filter-list">
             <li>
-              <button class="btn btn-primary mb-3 primary-btn" [disabled]="!detailsForm?.valid" (click)="saveDraft()">
+              <button class="btn btn-primary mb-3 primary-btn" [disabled]="!detailsForm.valid" (click)="saveDraft()">
                 <i class="fa fa-plus"></i> Save as Draft
               </button>
             </li>
@@ -297,11 +297,11 @@
               <div class="text-muted">{{ formatSlotDate(s.date) }}</div>
             </div>
             <div class="mt-2">
-              <div class="d-flex justify-content-between"><span>Event Type</span><span>{{ detailsForm?.value?.booking_type || '-' }}</span></div>
+              <div class="d-flex justify-content-between"><span>Event Type</span><span>{{ detailsForm.value?.booking_type || '-' }}</span></div>
             </div>
             <div class="mt-2 border-top pt-2">
               <div class="d-flex justify-content-between"><span>Menu</span><span>{{ reservation?.selectedMenu?.menu_name || '-' }}</span></div>
-              <div class="d-flex justify-content-between"><span>Persons</span><span>{{ personsControl?.value || 0 }}</span></div>
+              <div class="d-flex justify-content-between"><span>Persons</span><span>{{ personsControl.value || 0 }}</span></div>
               <div class="d-flex justify-content-between fw-semibold"><span>Total</span><span>PKR {{ getCurrentTotal() }}</span></div>
             </div>
           </div>
@@ -515,15 +515,15 @@
             <!-- Event Details -->
             <div class="mb-3 border-top pt-3">
               <h6 class="text-muted small mb-2">EVENT DETAILS</h6>
-              <div class="d-flex justify-content-between"><span class="small">Event Type</span><span class="small">{{ detailsForm?.value?.booking_type || '-' }}</span></div>
-              <div class="d-flex justify-content-between"><span class="small">Contact</span><span class="small">{{ detailsForm?.value?.contact_number || '-' }}</span></div>
+              <div class="d-flex justify-content-between"><span class="small">Event Type</span><span class="small">{{ detailsForm.value?.booking_type || '-' }}</span></div>
+              <div class="d-flex justify-content-between"><span class="small">Contact</span><span class="small">{{ detailsForm.value?.contact_number || '-' }}</span></div>
             </div>
 
             <!-- Menu Details -->
             <div class="mb-3 border-top pt-3">
               <h6 class="text-muted small mb-2">MENU DETAILS</h6>
               <div class="d-flex justify-content-between"><span class="small">Menu</span><span class="small">{{ reservation?.selectedMenu?.menu_name || '-' }}</span></div>
-              <div class="d-flex justify-content-between"><span class="small">Persons</span><span class="small">{{ personsControl?.value || 0 }}</span></div>
+              <div class="d-flex justify-content-between"><span class="small">Persons</span><span class="small">{{ personsControl.value || 0 }}</span></div>
               <div class="d-flex justify-content-between align-items-center">
                 <span class="small">Menu Price</span>
                 <div class="d-flex align-items-center">
