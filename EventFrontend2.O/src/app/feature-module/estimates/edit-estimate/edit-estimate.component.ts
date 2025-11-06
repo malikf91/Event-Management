@@ -189,12 +189,21 @@ export class EditEstimateComponent implements OnInit {
     // this.slotSelected = { hall: slotType, date: formattedDate, slot: slot };
     if(this.nextSlotIndex === 0) {
       this.slotSelected[0] = { hall: slotType, date: formattedDate, slot: slot };
+      this.slotSelected[1] = null;
       this.nextSlotIndex++;
     } else {
       this.slotSelected[1] = { hall: slotType, date: formattedDate, slot: slot };
       this.nextSlotIndex = 0;
     }
+
+    this.bookings = this.bookings.filter(booking => {
+      if ( this.reservationToEdit.booking_id == booking.booking_id ) {
+        return false;
+      }
+      return true;
+    });
   }
+
   getSelectedSlots(): any[] {
     return this.slotSelected.filter(slot => slot !== null);
   }

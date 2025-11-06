@@ -120,7 +120,7 @@ export class PurchasesDetailsComponent implements OnInit {
 
   // Chunk menu items into groups of 6
   getMenuItemsChunked(): any[][] {
-    const chunkSize = 6;
+    const chunkSize = 4;
     const chunks: any[][] = [];
     for (let i = 0; i < this.menuItems.length; i += chunkSize) {
       chunks.push(this.menuItems.slice(i, i + chunkSize));
@@ -255,6 +255,17 @@ export class PurchasesDetailsComponent implements OnInit {
             .card {
               box-shadow: none !important;
               border: 1px solid #ddd !important;
+            }
+            
+            /* Menu items border styling */
+            .menu-items-row td:nth-child(-n+4) {
+              border: 3px solid #dee2e6 !important;
+            }
+            
+            .menu-items-header td:nth-child(-n+4) {
+              border: 1px solid #dee2e6 !important;
+              font-weight: 600;
+              background-color: #f8f9fa;
             }
           </style>
         </head>

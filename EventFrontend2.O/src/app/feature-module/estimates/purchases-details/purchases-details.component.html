@@ -170,7 +170,7 @@
                                 <td>PKR{{reservationToView.selectedMenu?.price | number:'1.0-0' }}</td>
                                 <td>PKR{{reservationToView.total_menu_price | number:'1.0-0' }}</td>
                               </tr>
-                              <tr>
+                              <tr class="menu-items-header">
                                 <td>MENU ITEMS</td>
                                 <td></td>
                                 <td></td>
@@ -178,10 +178,18 @@
                                 <td></td>
                                 <td></td>
                               </tr>
-                              <tr *ngFor="let chunk of getMenuItemsChunked()">
+                              <tr *ngFor="let chunk of getMenuItemsChunked()" class="menu-items-row">
                                 <td *ngFor="let item of chunk">{{item.item_name}}</td>
                                 <!-- Fill remaining columns if less than 6 items in this row -->
                                 <td *ngFor="let i of [].constructor(6 - chunk.length)"></td>
+                              </tr>
+                              <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                               </tr>
                               <tr *ngFor="let service of reservationToView.additional_services">
                                 <td>{{service.additional_service_name}}</td>
@@ -240,7 +248,7 @@
                                 <th>Payment Receiver</th>
                                 <th>Amount</th>
                                 <th>Account</th>
-                                <th *ngIf="user.firstName !== 'SuperAdmin'"></th>
+                                <th *ngIf="user.firstName == 'SuperAdmin'"></th>
                               </tr>
                             </thead>
                             <tbody>
@@ -256,7 +264,7 @@
                                   </ng-template>
                                 </td>
                                 <td>{{ledger.account}}</td>
-                                <td *ngIf="user.firstName !== 'SuperAdmin'" class="d-flex align-items-center no-print">
+                                <td *ngIf="user.firstName == 'SuperAdmin'" class="d-flex align-items-center no-print">
                                   <ng-container *ngIf="editedLedger !== ledger && reservationToView.status !== 'CANCELLED'">
                                     <a class="btn-action-icon me-2" href="javascript:void(0);" (click)="setLedgerToEdit(ledger)">
                                       <i class="feather icon-edit"></i>

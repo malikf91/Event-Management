@@ -15,6 +15,17 @@
   color: #5A5A89; /* optional hover effect */
 }
 
+/* Menu items border styling */
+.menu-items-row td:nth-child(-n+4) {
+  border: 3px solid #dee2e6 !important;
+}
+
+.menu-items-header td:nth-child(-n+4) {
+  border: 3px solid #dee2e6 !important;
+  font-weight: 600;
+  background-color: #f8f9fa;
+}
+
 /* Print styles - hide navigation buttons during printing */
 @media print {
   /* Hide the entire navigation container */
@@ -61,12 +72,23 @@
     display: none !important;
     visibility: hidden !important;
   }
+
+  /* Keep menu items borders in print */
+  .menu-items-row td:nth-child(-n+4) {
+    border: 3px solid #dee2e6 !important;
+  }
+
+  .menu-items-header td:nth-child(-n+4) {
+    border: 3px solid #dee2e6 !important;
+    font-weight: 600;
+    background-color: #f8f9fa;
+  }
 }
 
 /* Additional print styles for better compatibility */
 @media print {
   * {
     -webkit-print-color-adjust: exact !important;
-    color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 }
