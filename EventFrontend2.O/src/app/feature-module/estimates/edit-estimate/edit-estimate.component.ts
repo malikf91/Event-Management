@@ -188,8 +188,8 @@ export class EditEstimateComponent implements OnInit {
     let formattedDate = date + '_' + monthNumber + '_' + year;
     // this.slotSelected = { hall: slotType, date: formattedDate, slot: slot };
     if(this.nextSlotIndex === 0) {
+      this.slotSelected = [];
       this.slotSelected[0] = { hall: slotType, date: formattedDate, slot: slot };
-      this.slotSelected[1] = null;
       this.nextSlotIndex++;
     } else {
       this.slotSelected[1] = { hall: slotType, date: formattedDate, slot: slot };
